@@ -32,14 +32,7 @@ const MessageButton = (props) => {
 
   return (
     <>
-      <Tooltip title="View Provider's Message">
-        <Button
-          onClick={openModal}
-          style={{ border: "none" }}
-          size="large"
-          icon={<MessageOutlined />}
-        />
-      </Tooltip>
+
       {modalVisible && ( // JS special grammer
         <Modal
           title="Provider's Message"
@@ -114,6 +107,28 @@ const CompletedPane = () => {
   );
 };
 
+const CompletedPane = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    /* setLoading(true);
+
+const CompletedPane = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    /* setLoading(true);
+
 // component button for the provider to set complete for records
 const CompleteButton = (props) => {
   const [loading, setLoading] = useState(false);
@@ -155,15 +170,6 @@ const RespondedPane = () => {
 
   const loadData = async () => {
     /* setLoading(true);
-
-    try {
-      const resp = await getRespondedRecords(); // user information will be passed in with token
-      setData(resp);
-    } catch (error) {
-      message.error(error.message);
-    } finally {
-      setLoading(false);
-    } */
   };
 
   return (
@@ -174,14 +180,7 @@ const RespondedPane = () => {
       dataSource={testDataSource2} // should replace it by data
       renderItem={(item) => (
         <List.Item>
-          <Card
-            key={item.id}
-            title={
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <Text ellipsis={true} style={{ maxWidth: 300 }}>
-                  {`${item.title}\u00A0\u00A0\u00A0@${item.location}`}
-                </Text>
-              </div>
+
             }
             extra={
               <Space size="large">
