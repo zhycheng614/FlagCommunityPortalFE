@@ -12,6 +12,8 @@ class App extends React.Component {
     authed: true, // should be false.
     asManager: false, // can be changed
   };
+// test test
+
 
   componentDidMount() {
     const authToken = localStorage.getItem("authToken");
