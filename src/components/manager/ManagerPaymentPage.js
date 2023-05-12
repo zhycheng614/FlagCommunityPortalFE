@@ -119,14 +119,6 @@ class ManagerPaymentPage extends React.Component {
         <TabPane tab="Add Bills" key="4">
           <Form onFinish={this.onFinish}>
             <FormItem
-              label="ID"
-              name="id"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <Input />
-            </FormItem>
-            <FormItem
               label="Title"
               name="title"
               labelCol={{ span: 24 }}
@@ -134,22 +126,7 @@ class ManagerPaymentPage extends React.Component {
             >
               <Input />
             </FormItem>
-            <FormItem
-              label="Location"
-              name="location"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <Input />
-            </FormItem>
-            <FormItem
-              label="Description"
-              name="description"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <Input />
-            </FormItem>
+
             <FormItem
               label="Amount"
               name="amount"
@@ -159,7 +136,7 @@ class ManagerPaymentPage extends React.Component {
               <Input />
             </FormItem>
             <FormItem
-              label="Time"
+              label="Due Time"
               name="time"
               labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}
