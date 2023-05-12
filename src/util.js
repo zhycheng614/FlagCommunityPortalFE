@@ -47,12 +47,12 @@ export const register = (credential, identity) => {
   });
 };
 
-export const moveIn= (values) => {
+export const moveIn = (values) => {
   const authToken = localStorage.getItem("authToken");
   const flatUrl = `${domain}/moveIn?username=${values.tenant}&apartmentNumber=${values.apt}`;
   console.log(flatUrl);
   return fetch(flatUrl, {
-    method : "PUT",
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -64,11 +64,11 @@ export const moveIn= (values) => {
   });
 };
 
-export const moveOut= (values) => {
+export const moveOut = (values) => {
   const authToken = localStorage.getItem("authToken");
   const flatUrl = `${domain}/moveOut?username=${values.tenant}`;
   return fetch(flatUrl, {
-    method : "PUT",
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -80,11 +80,11 @@ export const moveOut= (values) => {
   });
 };
 
-export const moveInAndAssign= (values) => {
+export const moveInAndAssign = (values) => {
   const authToken = localStorage.getItem("authToken");
   const flatUrl = `${domain}/moveInAndAssignNewOwner?username=${values.tenant}&apartmentNumber=${values.apt}&newOwnerUsername=${values.owner}`;
   return fetch(flatUrl, {
-    method : "PUT",
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
@@ -96,11 +96,11 @@ export const moveInAndAssign= (values) => {
   });
 };
 
-export const moveOutAndAssign= (values) => {
+export const moveOutAndAssign = (values) => {
   const authToken = localStorage.getItem("authToken");
   const flatUrl = `${domain}/moveOutAndAssignNewOwner?username=${values.tenant}&newOwnerUsername=${values.owner}`;
   return fetch(flatUrl, {
-    method : "PUT",
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${authToken}`,
     },
