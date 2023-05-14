@@ -12,7 +12,7 @@ import {
 import { MessageOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
-import CreateNew from "./CreateNew";
+import CreateNewMaintenance from "./CreateNewMaintenance";
 
 const { TabPane } = Tabs;
 
@@ -186,7 +186,7 @@ export const RecordPane = () => {
     /* setLoading(true);
 
     try {
-      const resp = await getRecordsByTenant(); // user information will be passed in with token
+      const resp = await getMaintenanceByUser(username); // user information will be passed in with token
       setData(resp);
     } catch (error) {
       message.error(error.message);
@@ -241,7 +241,7 @@ const TenantMaintenance = () => {
         <RecordPane />
       </TabPane>
       <TabPane tab="Create New" key="2">
-        <CreateNew asManager={false} />
+        <CreateNewMaintenance asManager={false} />
       </TabPane>
     </Tabs>
   );

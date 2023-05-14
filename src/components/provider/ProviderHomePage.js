@@ -1,19 +1,20 @@
 import { Layout, Menu, message } from "antd";
 import { useState } from "react";
 import {
-  DashboardOutlined,
   ToolOutlined,
   TeamOutlined,
+  NotificationOutlined,
 } from "@ant-design/icons";
 import ManagerMaintenance from "./ProviderMaintenance";
+import ProviderAnnouncement from "./ProviderAnnouncement";
 
 const { Content, Sider } = Layout;
 
 const providerMenuItems = [
   {
-    label: "Dashboard",
-    key: "dashboard",
-    icon: <DashboardOutlined />,
+    label: "Announcement",
+    key: "announcement",
+    icon: <NotificationOutlined />,
   },
   {
     label: "Maintenance",
@@ -28,21 +29,17 @@ const providerMenuItems = [
 ];
 
 const ProviderHomePage = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("");
+  const [selectedMenuItem, setSelectedMenuItem] = useState(
+    <ProviderAnnouncement />
+  );
 
   const onMenuItemSelect = ({ key }) => {
     switch (key) {
-      case "dashboard":
-        setSelectedMenuItem("dashboard");
+      case "announcement":
+        setSelectedMenuItem(<ProviderAnnouncement />);
         break;
       case "maintenance":
         setSelectedMenuItem(<ManagerMaintenance />);
-        break;
-      case "reservation":
-        setSelectedMenuItem("reservation");
-        break;
-      case "payment":
-        setSelectedMenuItem("payment");
         break;
       case "forum":
         setSelectedMenuItem("forum");

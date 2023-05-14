@@ -6,7 +6,7 @@ const layout = {
   wrapperCol: { span: 12 },
 };
 
-const CreateNew = (props) => {
+const CreateNewMaintenance = (props) => {
   const [loading, setLoading] = useState(false);
   const { asManager } = props;
 
@@ -14,8 +14,8 @@ const CreateNew = (props) => {
     /*     setLoading(true);
 
     try {
-      await submitRecord(values);
-      message.success("Upload successfully.");
+      await addMaintenance(values);
+      message.success("Submitted successfully.");
     } catch (error) {
       message.error(error.message);
     } finally {
@@ -31,7 +31,12 @@ const CreateNew = (props) => {
       style={{ maxWidth: 1000, margin: "auto" }}
     >
       <Form.Item name="location" label="Location" rules={[{ required: true }]}>
-        <Input disabled={!asManager} defaultValue={asManager ? "" : "501"} />
+        <Input
+          disabled={!asManager}
+          defaultValue={
+            asManager ? "" : localStorage.getItem("apartmentNumber")
+          }
+        />
       </Form.Item>
       <Form.Item
         name="issue_description"
@@ -41,16 +46,7 @@ const CreateNew = (props) => {
         <Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-        <Button
-          type="primary"
-          /* 
-              tell form that after click this button, the form will finish and thus trigger onFinish() 
-              we can use onclick, but in that case we need to use ref to collect data
-              if we submit form, the onFinish() function will pass in the data object to us automatically
-            */
-          htmlType="submit"
-          loading={loading}
-        >
+        <Button type="primary" htmlType="submit" loading={loading}>
           Submit
         </Button>
       </Form.Item>
@@ -58,4 +54,4 @@ const CreateNew = (props) => {
   );
 };
 
-export default CreateNew;
+export default CreateNewMaintenance;

@@ -432,7 +432,7 @@ export const getPostByUser = (username) => {
 };
 
 /**
- * Delete a post/announcement
+ * Delete a post
  *
  * @param {string} postId - The ID of the post to be deleted.
  * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
@@ -453,7 +453,7 @@ export const deletePost = (postId) => {
 };
 
 /**
- * Add a post/announcement
+ * Add a post
  *
  * @param {object} data - The data to be sent to the server.
  * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
@@ -471,6 +471,92 @@ export const addPost = (data) => {
   }).then((response) => {
     if (response.status !== 200) {
       throw Error("Fail to add post");
+    }
+  });
+};
+
+/**
+ * Add an announcement
+ *
+ * @param {object} data - The data to be sent to the server.
+ * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
+ */
+export const addAnnouncement = (data) => {
+  const authToken = localStorage.getItem("authToken");
+  const addAnnouncementUrl = `${domain}/announcement`;
+  return fetch(addAnnouncementUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to create announcement.");
+    }
+  });
+};
+
+/**
+ * Get announcements by manager
+ *
+ * @returns {Promise} A Promise that resolves to an array of post objects returned by the server.
+ */
+export const getAnnouncementByManager = () => {
+  const authToken = localStorage.getItem("authToken");
+  const getAnnouncementByManagerUrl = `${domain}/announcement`;
+  return fetch(getAnnouncementByManagerUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get post list");
+    }
+    return response.json();
+  });
+};
+
+/**
+ * Get all announcements - by tenant
+ *
+ * @returns {Promise} A Promise that resolves to an array of post objects returned by the server.
+ */
+export const getAllAnnouncements = () => {
+  const authToken = localStorage.getItem("authToken");
+  const getAllAnnouncementsUrl = `${domain}/announcements`;
+  return fetch(getAllAnnouncementsUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get announcement list.");
+    }
+    return response.json();
+  });
+};
+
+/**
+ * Delete an announcement
+ *
+ * @param {string} postId - The ID of the post to be deleted.
+ * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
+ */
+export const deleteAnnouncement = (postId) => {
+  const authToken = localStorage.getItem("authToken");
+  const deletePostUrl = `${domain}/announcement/${postId}`;
+  return fetch(deletePostUrl, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to delete post");
     }
   });
 };
