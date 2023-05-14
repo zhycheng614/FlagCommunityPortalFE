@@ -42,11 +42,7 @@ const LoginPage = (props) => {
 
     try {
       // call utils function to send request
-      // const resp = await login(formInstance.getFieldsValue(true), authority);
-      const resp = await login(
-        { username: "tenant1", password: "1234" },
-        authority
-      );
+      const resp = await login(formInstance.getFieldsValue(true), authority);
       // this function is passed in from parent: App.js
       handleLoginSuccess(resp.token, authority);
     } catch (error) {
@@ -86,7 +82,7 @@ const LoginPage = (props) => {
   };
 
   return (
-    <div style={{ width: 400, margin: "20px auto" }}>
+    <div style={{ width: 400, margin: "50px auto" }}>
       <Form ref={formRef}>
         <Form.Item
           name="username"

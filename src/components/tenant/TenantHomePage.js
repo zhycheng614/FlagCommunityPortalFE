@@ -10,6 +10,7 @@ import {
 import TenantMaintenance from "./TenantMaintenance";
 import TenantReservationPage from "./TenantReservationPage";
 import TenantPaymentPage from "./TenantPaymentPage";
+import Dashboard from "./TenantDashboard";
 
 const { Content, Sider } = Layout;
 
@@ -42,12 +43,12 @@ const tenantMenuItems = [
 ];
 
 const TenantHomePage = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("");
+  const [selectedMenuItem, setSelectedMenuItem] = useState(<Dashboard />);
 
   const onMenuItemSelect = ({ key }) => {
     switch (key) {
       case "dashboard":
-        setSelectedMenuItem("dashboard");
+        setSelectedMenuItem(<Dashboard />);
         break;
       case "maintenance":
         setSelectedMenuItem(<TenantMaintenance />);

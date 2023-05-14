@@ -9,12 +9,17 @@ import LoginPage from "./components/LoginPage";
 const { Header } = Layout;
 
 const App = () => {
-  const [authed, setAuthed] = useState(true); // should be change into false
-  const [authority, setAuthority] = useState("manager");
+  const [authed, setAuthed] = useState(false);
+  const [authority, setAuthority] = useState("");
 
   // function that will be passed to login component and called after login
   const handleLoginSuccess = (token, authority) => {
-    localStorage.setItem("authToken", token);
+    if (authority === "tenant") {
+      localStorage.setItem("authToken", token.token);
+      localStorage.setItem("apartmentNumber", token.apartmentNumber);
+    } else {
+      localStorage.setItem("authToken", token);
+    }
     localStorage.setItem("authority", authority);
     setAuthed(true);
     setAuthority(authority);
@@ -23,6 +28,9 @@ const App = () => {
   const handleLogOut = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("authority");
+    if (authority === "tenant") {
+      localStorage.removeItem("apartmentNumber");
+    }
     setAuthed(false);
   };
 
