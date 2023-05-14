@@ -6,10 +6,13 @@ import {
   ScheduleOutlined,
   DollarCircleOutlined,
   TeamOutlined,
+  NotificationOutlined,
+  SolutionOutlined,
 } from "@ant-design/icons";
 import ManagerMaintenance from "./ManagerMaintenance.js";
 import ManagerReservationPage from "./ManagerReservationPage.js";
 import ManagerPaymentPage from "./ManagerPaymentPage.js";
+import ManagerAnnouncementPage from "./ManagerAnnouncementPage.js";
 
 const { Content, Sider } = Layout;
 
@@ -39,10 +42,20 @@ const managerMenuItems = [
     key: "forum",
     icon: <TeamOutlined />,
   },
+  {
+    label: "Announcement",
+    key: "announcement",
+    icon: <NotificationOutlined />,
+  },
+  {
+    label: "Management",
+    key: "management",
+    icon: <SolutionOutlined />,
+  },
 ];
 
 const ManagerHomePage = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("");
+  const [selectedMenuItem, setSelectedMenuItem] = useState("dashboard");
 
   const onMenuItemSelect = ({ key }) => {
     switch (key) {
@@ -60,6 +73,12 @@ const ManagerHomePage = () => {
         break;
       case "forum":
         setSelectedMenuItem("forum");
+        break;
+      case "announcement":
+        setSelectedMenuItem(<ManagerAnnouncementPage />);
+        break;
+      case "management":
+        setSelectedMenuItem("management");
         break;
     }
   };
