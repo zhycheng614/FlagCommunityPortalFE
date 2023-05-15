@@ -13,6 +13,7 @@ import ManagerMaintenance from "./ManagerMaintenance.js";
 import ManagerReservationPage from "./ManagerReservationPage.js";
 import ManagerPaymentPage from "./ManagerPaymentPage.js";
 import ManagerAnnouncementPage from "./ManagerAnnouncementPage.js";
+import ManagerAssignmentPage from "./ManagerAssignmentPage.js";
 
 const { Content, Sider } = Layout;
 
@@ -20,6 +21,11 @@ const managerMenuItems = [
   {
     label: "Dashboard",
     key: "dashboard",
+    icon: <DashboardOutlined />,
+  },
+  {
+    label: "Assignment",
+    key: "assignment",
     icon: <DashboardOutlined />,
   },
   {
@@ -61,6 +67,9 @@ const ManagerHomePage = () => {
     switch (key) {
       case "dashboard":
         setSelectedMenuItem("dashboard");
+        break;
+      case "assignment":
+        setSelectedMenuItem(<ManagerAssignmentPage />);
         break;
       case "maintenance":
         setSelectedMenuItem(<ManagerMaintenance />);
