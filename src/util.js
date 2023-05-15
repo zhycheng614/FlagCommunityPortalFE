@@ -47,6 +47,21 @@ export const register = (credential, identity) => {
   });
 };
 
+export const getFlatMate = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/getFlatmates?username=${values.username}`;
+  return fetch(flatUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get flat mates");
+    }
+    return response.json();
+  });
+};
+
 /**
  * Get all maintenance records - by manager
  *
