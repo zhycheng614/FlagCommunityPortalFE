@@ -24,9 +24,9 @@ const managerMenuItems = [
     icon: <DashboardOutlined />,
   },
   {
-    label: "Assignment",
+    label: "Room Assignment",
     key: "assignment",
-    icon: <DashboardOutlined />,
+    //icon: <UserOutlined />,
   },
   {
     label: "Maintenance",

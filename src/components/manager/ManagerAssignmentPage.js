@@ -1,28 +1,18 @@
-import CreateNewMaintenance from "../tenant/CreateNewMaintenance";
-import { RecordPane } from "../tenant/TenantMaintenance";
+import Move from "../manager/Move.js";
 import {
-  Button,
-  Card,
-  Input,
-  List,
-  Modal,
-  Space,
-  Tabs,
-  Tooltip,
-  message,
-} from "antd";
-import TenantList from "./TenantList";
-
+    Tabs
+  } from "antd";
+import TenantList from "./TenantList.js";
 const { TabPane } = Tabs;
 
 const ManagerAssignmentPage = () => {
   return (
     <Tabs defaultActiveKey="1" destroyInactiveTabPane={true}>
-      <TabPane tab="Search for current tenant" key="1">
-        <TenantList />
+      <TabPane tab="Move In/Move Out" key="1">
+        <Move />
       </TabPane>
-      <TabPane tab="Create New" key="2">
-        <CreateNewMaintenance asManager={true} />
+      <TabPane tab="Search for Roommate" key="2">
+        <TenantList />
       </TabPane>
     </Tabs>
   );
