@@ -32,7 +32,7 @@ const TenantList = () => {
     };
     return (
         <div>
-        <Form name="nest-messages" onFinish={handleSubmit} // data collected by antd automatically on finish
+        <Form name="nest-messages" onFinish={handleSubmit}
             style={{ maxWidth: 1000, margin: "auto" }}>
             <Form.Item name="username" label="Tenant name" 
                 rules={[{ required: true }]}>

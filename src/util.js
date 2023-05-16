@@ -47,6 +47,71 @@ export const register = (credential, identity) => {
   });
 };
 
+export const moveIn= (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveIn?username=${values.tenant}&apartmentNumber=${values.apt}`;
+  console.log(flatUrl);
+  return fetch(flatUrl, {
+    method : "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move in");
+    }
+    return response;
+  });
+};
+
+export const moveOut= (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveOut?username=${values.tenant}`;
+  return fetch(flatUrl, {
+    method : "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move out");
+    }
+    return response;
+  });
+};
+
+export const moveInAndAssign= (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveInAndAssignNewOwner?username=${values.tenant}&apartmentNumber=${values.apt}&newOwnerUsername=${values.owner}`;
+  return fetch(flatUrl, {
+    method : "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move in");
+    }
+    return response;
+  });
+};
+
+export const moveOutAndAssign= (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveOutAndAssignNewOwner?username=${values.tenant}&newOwnerUsername=${values.owner}`;
+  return fetch(flatUrl, {
+    method : "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move out");
+    }
+    return response;
+  });
+};
+
 export const getFlatMate = (values) => {
   const authToken = localStorage.getItem("authToken");
   const flatUrl = `${domain}/getFlatmates?username=${values.username}`;
