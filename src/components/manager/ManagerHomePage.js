@@ -1,4 +1,4 @@
-import { Layout, Menu, message } from "antd";
+import { Layout, Menu } from "antd";
 import { useState } from "react";
 import {
   DashboardOutlined,
@@ -72,7 +72,7 @@ const ManagerHomePage = () => {
         setSelectedMenuItem(<ManagerPaymentPage />);
         break;
       case "forum":
-        setSelectedMenuItem("forum");
+        setSelectedMenuItem("ManagerForumPage");
         break;
       case "announcement":
         setSelectedMenuItem(<ManagerAnnouncementPage />);

@@ -395,9 +395,9 @@ export const updatePayment = (data) => {
  *
  * @returns {Promise} A Promise that resolves to an array of post objects returned by the server.
  */
-export const getPost = () => {
+export const getAllPost = () => {
   const authToken = localStorage.getItem("authToken");
-  const listPostUrl = `${domain}/post`;
+  const listPostUrl = `${domain}/posts`;
   return fetch(listPostUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -411,14 +411,14 @@ export const getPost = () => {
 };
 
 /**
- * Get posts/announcements made by username
+ * Get posts/announcements made by user
  *
  * @param {string} username - The username of the user whose posts are to be retrieved.
  * @returns {Promise} A Promise that resolves to an array of post objects returned by the server.
  */
-export const getPostByUser = (username) => {
+export const getPostByUser = () => {
   const authToken = localStorage.getItem("authToken");
-  const listPostUrl = `${domain}/post/${username}`;
+  const listPostUrl = `${domain}/post`;
   return fetch(listPostUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -460,8 +460,8 @@ export const deletePost = (postId) => {
  */
 export const addPost = (data) => {
   const authToken = localStorage.getItem("authToken");
-  const bookStayUrl = `${domain}/post`;
-  return fetch(bookStayUrl, {
+  const addPostUrl = `${domain}/post`;
+  return fetch(addPostUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${authToken}`,
