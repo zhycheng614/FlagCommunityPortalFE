@@ -10,6 +10,8 @@ import {
 import TenantMaintenance from "./TenantMaintenance";
 import TenantReservationPage from "./TenantReservationPage";
 import TenantPaymentPage from "./TenantPaymentPage";
+import Dashboard from "./TenantDashboard";
+import TenantForumPage from "./TenantForumPage";
 
 const { Content, Sider } = Layout;
 
@@ -42,12 +44,12 @@ const tenantMenuItems = [
 ];
 
 const TenantHomePage = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("");
+  const [selectedMenuItem, setSelectedMenuItem] = useState(<Dashboard />);
 
   const onMenuItemSelect = ({ key }) => {
     switch (key) {
       case "dashboard":
-        setSelectedMenuItem("dashboard");
+        setSelectedMenuItem(<Dashboard />);
         break;
       case "maintenance":
         setSelectedMenuItem(<TenantMaintenance />);
@@ -59,7 +61,7 @@ const TenantHomePage = () => {
         setSelectedMenuItem(<TenantPaymentPage />);
         break;
       case "forum":
-        setSelectedMenuItem("forum");
+        setSelectedMenuItem(<TenantForumPage />);
         break;
     }
   };

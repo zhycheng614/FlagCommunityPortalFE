@@ -1,238 +1,160 @@
-import React from "react";
-import { Button, DatePicker, Form, Input, Table, Tabs, Checkbox } from "antd";
-import moment from "moment";
+import React, { useState, useEffect } from "react";
+import { getPayment, addPayment } from "../../util";
+import { Table, Button, Modal, Input, DatePicker, Tabs } from "antd";
 
 const { TabPane } = Tabs;
-const { Item: FormItem } = Form;
 
-class ManagerPaymentPage extends React.Component {
-  state = {
-    selectedRowKeys: [],
-  };
+const ManagerPaymentPage = () => {
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  getColumns(isUnpaidTable) {
-    const columns = [
-      { title: "ID", dataIndex: "id", key: "id" },
-      { title: "Title", dataIndex: "title", key: "title" },
-      { title: "Location", dataIndex: "location", key: "location" },
-      { title: "Description", dataIndex: "description", key: "description" },
-      { title: "Amount", dataIndex: "amount", key: "amount" },
-      { title: "Time", dataIndex: "time", key: "time" },
-    ];
+  const columns = [
+    {
+      title: "Invoice ID",
+      dataIndex: "invoiceID",
+    },
+    {
+      title: "Tenant",
+      dataIndex: "tenant",
+    },
+    {
+      title: "Invoice Name",
+      dataIndex: "invoiceName",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+    },
+    {
+      title: "Invoice Date",
+      dataIndex: "invoiceDate",
+    },
+    {
+      title: "Due Date",
+      dataIndex: "dueDate",
+    },
+    {
+      title: "Payment Date",
+      dataIndex: "paymentDate",
+    },
+  ];
 
-    if (isUnpaidTable) {
-      columns.push({
-        title: (
-          <Checkbox
-            onChange={this.onSelectAll}
-            checked={
-              this.state.selectedRowKeys.length ===
-              this.state.unpaidDataSource.length
-            }
-          />
-        ),
-        dataIndex: "checkbox",
-        render: (_, record) => (
-          <Checkbox
-            checked={this.state.selectedRowKeys.includes(record.id)}
-            onChange={() => this.onSelectRow(record.id)}
-          />
-        ),
-        key: "checkbox",
-      });
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await getPayment();
+      setInvoices(response);
+    } catch (error) {
+      console.log("Error fetching payment data:", error);
     }
-
-    return columns;
-  }
-
-  onSelectAll = (e) => {
-    const selectedRowKeys = e.target.checked
-      ? this.state.unpaidDataSource.map((item) => item.id)
-      : [];
-    this.setState({ selectedRowKeys });
+    setLoading(false);
   };
 
-  onSelectRow = (id) => {
-    const { selectedRowKeys } = this.state;
-    const index = selectedRowKeys.indexOf(id);
-    if (index === -1) {
-      selectedRowKeys.push(id);
-    } else {
-      selectedRowKeys.splice(index, 1);
+  const paidInvoices = invoices.filter((invoice) => invoice.paymentDate);
+  const unpaidInvoices = invoices.filter(
+    (invoice) => !invoice.paymentDate && new Date(invoice.dueDate) >= new Date()
+  );
+  const overdueInvoices = invoices.filter(
+    (invoice) => !invoice.paymentDate && new Date(invoice.dueDate) < new Date()
+  );
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newInvoice, setNewInvoice] = useState({
+    invoiceName: "",
+    amount: "",
+    dueDate: "",
+  });
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    try {
+      await addPayment(newInvoice);
+      fetchData();
+      setIsModalVisible(false);
+    } catch (error) {
+      console.log("Error adding new invoice:", error);
     }
-    this.setState({ selectedRowKeys });
   };
 
-  onFinish = (values) => {
-    const { testDataSource } = this.state;
-    const newRecord = {
-      ...values,
-      status: "Unpaid",
-      time: `${values.time.format("YYYY.M.D")} 11:59pm`,
-    };
-    this.setState({ testDataSource: [...testDataSource, newRecord] });
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
-  render() {
-    const paidDataSource = testDataSource.filter(
-      (item) => item.status === "Paid"
-    );
-    const unpaidDataSource = testDataSource.filter(
-      (item) => item.status === "Unpaid"
-    );
-    const overdueDataSource = testDataSource.filter(
-      (item) =>
-        item.status === "Unpaid" &&
-        moment(item.time, "YYYY.MM.DD h:mmA").isBefore(moment())
-    );
+  const handleInputChange = (e) => {
+    setNewInvoice({ ...newInvoice, [e.target.name]: e.target.value });
+  };
 
-    this.state.unpaidDataSource = unpaidDataSource;
+  const handleDateChange = (_, dateString) => {
+    setNewInvoice({ ...newInvoice, dueDate: dateString });
+  };
 
-    return (
-      <Tabs defaultActiveKey="1" destroyInactiveTabPane={true}>
-        <TabPane tab="Paid" key="1">
+  return (
+    <div>
+      <Button onClick={showModal}>Add Bills</Button>
+      <Modal
+        title="Add Bills"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Input
+          name="invoiceName"
+          placeholder="Invoice Name"
+          onChange={handleInputChange}
+          value={newInvoice.invoiceName}
+        />
+        <br />
+        <br />
+        <Input
+          name="amount"
+          placeholder="Amount"
+          type="number"
+          onChange={handleInputChange}
+          value={newInvoice.amount}
+        />
+        <br />
+        <br />
+        <DatePicker
+          name="dueDate"
+          onChange={handleDateChange}
+          format="YYYY-MM-DD"
+        />
+      </Modal>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="All" key="1">
+          <Table dataSource={invoices} columns={columns} loading={loading} />
+        </TabPane>
+        <TabPane tab="Paid" key="2">
           <Table
-            columns={this.getColumns(false)}
-            dataSource={unpaidDataSource}
-            rowKey="id"
+            dataSource={paidInvoices}
+            columns={columns}
+            loading={loading}
           />
         </TabPane>
-        <TabPane tab="Unpaid" key="2">
+        <TabPane tab="Unpaid" key="3">
           <Table
-            columns={this.getColumns(false)}
-            dataSource={unpaidDataSource}
-            rowKey="id"
+            dataSource={unpaidInvoices}
+            columns={columns}
+            loading={loading}
           />
         </TabPane>
-        <TabPane tab="Overdue" key="3">
+        <TabPane tab="Overdue" key="4">
           <Table
-            columns={this.getColumns(true)}
-            dataSource={overdueDataSource}
-            rowKey="id"
+            dataSource={overdueInvoices}
+            columns={columns}
+            loading={loading}
           />
-          <div style={{ textAlign: "right", marginTop: "15px" }}>
-            <Button type="primary" onClick={this.sendNotification}>
-              Send Notification
-            </Button>
-          </div>
-        </TabPane>
-        <TabPane tab="Add Bills" key="4">
-          <Form onFinish={this.onFinish}>
-            <FormItem
-              label="Title"
-              name="title"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <Input />
-            </FormItem>
-
-            <FormItem
-              label="Amount"
-              name="amount"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <Input />
-            </FormItem>
-            <FormItem
-              label="Due Time"
-              name="time"
-              labelCol={{ span: 24 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <DatePicker format="YYYY.M.D" />
-            </FormItem>
-            <FormItem style={{ textAlign: "right" }}>
-              <Button type="primary" htmlType="submit">
-                Create
-              </Button>
-            </FormItem>
-          </Form>
         </TabPane>
       </Tabs>
-    );
-  }
-
-  sendNotification = () => {
-    // Implement the logic to send notifications to the selected users
-    console.log("Sending notifications to:", this.state.selectedRowKeys);
-  };
-}
+    </div>
+  );
+};
 
 export default ManagerPaymentPage;
-
-const testDataSource = [
-  {
-    id: 1,
-    title: "Rent",
-    location: "501",
-    description: "This is the rent for April",
-    amount: "3500",
-    status: "Paid",
-    time: "2023.4.1 11:59pm",
-  },
-  {
-    id: 2,
-    title: "Utilities Fee",
-    location: "501",
-    description: "This is the utilities fee for April",
-    amount: "250",
-    status: "Paid",
-    time: "2023.4.1 11:59pm",
-  },
-  {
-    id: 3,
-    title: "Rent",
-    location: "502",
-    description: "This is the rent for April",
-    amount: "3200",
-    status: "Unpaid",
-    time: "2023.4.1 11:59pm",
-  },
-  {
-    id: 4,
-    title: "Utilities Fee",
-    location: "502",
-    description: "This is the utilities fee for April",
-    amount: "230",
-    status: "Unpaid",
-    time: "2023.4.1 11:59pm",
-  },
-  {
-    id: 5,
-    title: "Rent",
-    location: "503",
-    description: "This is the rent for June",
-    amount: "3800",
-    status: "Unpaid",
-    time: "2023.6.1 11:59pm",
-  },
-  {
-    id: 6,
-    title: "Utilities Fee",
-    location: "503",
-    description: "This is the utilities fee for June",
-    amount: "300",
-    status: "Unpaid",
-    time: "2023.6.1 11:59pm",
-  },
-  {
-    id: 7,
-    title: "Rent",
-    location: "504",
-    description: "This is the rent for June",
-    amount: "3400",
-    status: "Unpaid",
-    time: "2023.6.1 11:59pm",
-  },
-  {
-    id: 8,
-    title: "Utilities Fee",
-    location: "504",
-    description: "This is the utilities fee for June",
-    amount: "280",
-    status: "Unpaid",
-    time: "2023.6.1 11:59pm",
-  },
-];

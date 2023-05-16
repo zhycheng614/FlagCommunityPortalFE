@@ -1,4 +1,4 @@
-import CreateNew from "../tenant/CreateNew";
+import CreateNewMaintenance from "../tenant/CreateNewMaintenance";
 import { RecordPane } from "../tenant/TenantMaintenance";
 import {
   Button,
@@ -21,7 +21,7 @@ const ManagerMaintenance = () => {
         <RecordPane />
       </TabPane>
       <TabPane tab="Create New" key="2">
-        <CreateNew asManager={true} />
+        <CreateNewMaintenance asManager={true} />
       </TabPane>
     </Tabs>
   );
