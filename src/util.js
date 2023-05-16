@@ -110,9 +110,9 @@ export const moveIn = (values) => {
     },
   }).then((response) => {
     if (response.status !== 200) {
-          return response.text().then((errorMessage) => {
-          throw new Error(errorMessage);
-        });
+      return response.text().then((errorMessage) => {
+        throw new Error(errorMessage);
+      });
     }
     return response;
   });
@@ -181,7 +181,7 @@ export const getFlatMateByTenant = (values) => {
       });
     }
     return response.json();
-    });
+  });
 };
 
 export const getFlatMateByApart = (values) => {
@@ -198,7 +198,7 @@ export const getFlatMateByApart = (values) => {
       });
     }
     return response.json();
-    });
+  });
 };
 
 /**
