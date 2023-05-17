@@ -16,7 +16,6 @@ import {
   Button,
   Card,
   Modal,
-  Radio,
   Tooltip,
   Space,
 } from "antd";
@@ -28,6 +27,7 @@ import {
 } from "@ant-design/icons";
 import { getStatusClassNames } from "antd/lib/_util/statusUtils";
 // import AmenityDetailInfoButton from "./TenantReservationPage";
+import { getReservations, addReservation } from "../../util";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -35,15 +35,6 @@ const options = [];
 const handleChange = (value) => {
   console.log(`Selected: ${value}`);
 };
-
-const data = [
-  { name: "Gym", capacity: "15", Image: "./img/gym.jpeg" },
-  { name: "Game Room", capacity: "5", Image: "./img/game.jpeg" },
-  { name: "Meeting Room", capacity: "10", Image: "./img/meetingroom.jpeg" },
-  { name: "Yoga Room", capacity: "20", Image: "./img/yoga.jpeg" },
-  { name: "Kids Room", capacity: "15", Image: "./img/kids.jpeg" },
-  { name: "Pool", capacity: "10", Image: "./img/pool.jpeg" },
-];
 
 export class AmenityDetailInfoButton extends React.Component {
   state = {
@@ -64,7 +55,7 @@ export class AmenityDetailInfoButton extends React.Component {
 
   render() {
     const { amenity } = this.props;
-    const { name, capacity } = amenity;
+    const { capacity } = amenity;
     const { modalVisible } = this.state;
     return (
       <>
@@ -78,7 +69,6 @@ export class AmenityDetailInfoButton extends React.Component {
         </Tooltip>
         {modalVisible && (
           <Modal
-            // title={name}
             centered={true}
             visible={modalVisible}
             closable={false}
@@ -95,33 +85,35 @@ export class AmenityDetailInfoButton extends React.Component {
     );
   }
 }
+
 class AmenitiesList extends React.Component {
   state = {
     loading: false,
+    data: [],
   };
 
   componentDidMount() {
-    // this.loadData();
+    this.loadData();
   }
 
-  // loadData = async () => {
-  //   this.setState({
-  //     loading: true,
-  //   });
+  loadData = async () => {
+    this.setState({
+      loading: true,
+    });
 
-  //   try {
-  //     const resp = await getStaysByHost();
-  //     this.setState({
-  //       data: resp,
-  //     });
-  //   } catch (error) {
-  //     message.error(error.message);
-  //   } finally {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //   }
-  // };
+    try {
+      const resp = await getReservations();
+      this.setState({
+        data: resp,
+      });
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
+  };
   render() {
     return (
       <Space
@@ -184,31 +176,83 @@ class SelectAmenityButton extends React.Component {
   state = {
     loading: false,
     modalVisible: false,
+    data: [],
   };
 
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = async () => {
+    this.setState({
+      loading: true,
+    });
+    try {
+      const resp = await getReservations();
+      this.setState({
+        data: resp,
+      });
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
+  // handleSubmit = async (values) => {
+  //   const { amenity } = this.props;
+  //   this.setState({
+  //     loading: true,
+  //   });
+
+  //   try {
+  //     const startTime = new Date(values["Time Slot"][0]);
+  //     const endTime = new Date(values["Time Slot"][1]);
+
+  //     // Perform the comparison or any other logic with startTime and endTime here
+
+  //     await addReservation({
+  //       date: values.date.format("YYYY-MM-DD"),
+  //       start_time: startTime.toISOString(), // Convert start_time to Date object
+  //       end_time: endTime.toISOString(), // Convert end_time to Date object
+  //       amenity: {
+  //         id: amenity.id,
+  //       },
+  //     });
+  //     message.success("Successfully booked amenity");
+  //   } catch (error) {
+  //     message.error(error.message);
+  //   } finally {
+  //     this.setState({
+  //       loading: false,
+  //     });
+  //   }
+  // };
   handleSubmit = async (values) => {
     const { amenity } = this.props;
     this.setState({
       loading: true,
     });
 
-    // try {
-    //   await addReservation({
-    //     date: values.date.format("YYYY-MM-DD"),
-    //     start_time: values.start_time.format("HHHH-MM-SS"),
-    //     end_time: values.end_time.format("HHHH-MM-SS"),
-    //     amenity: {
-    //       id: amenity.id,
-    //     },
-    //   });
-    //   message.success("Successfully book amenity");
-    // } catch (error) {
-    //   message.error(error.message);
-    // } finally {
-    //   this.setState({
-    //     loading: false,
-    //   });
-    // }
+    try {
+      await addReservation({
+        date: values.date.format("YYYY-MM-DD"),
+        start_time: values.startTime,
+        end_time: values.endTime,
+        amenity: {
+          id: amenity.id,
+        },
+      });
+      message.success("Successfully book amenity");
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
   };
 
   render() {
@@ -233,7 +277,7 @@ class SelectAmenityButton extends React.Component {
           dataSource={data}
           {...layout}
           preserve={false}
-          onFinish={this.handleSubmit}
+          onFinish={(values) => this.handleSubmit(values)}
           style={{
             maxWidth: 800,
           }}
@@ -248,7 +292,6 @@ class SelectAmenityButton extends React.Component {
               style={{
                 width: 150,
               }}
-              // dataSource={amenity}
               // location={amenity.name}
               // defaultValue="Party Room"
               placeholder="Location"
@@ -273,7 +316,6 @@ class SelectAmenityButton extends React.Component {
                 {
                   value: "Kids Room",
                   label: "Kids Room",
-                  disabled: true,
                 },
                 {
                   value: "Pool",
@@ -300,7 +342,7 @@ class SelectAmenityButton extends React.Component {
           <Form.Item
             // layout="horizontal"
             // label="Guest number"
-            name="Guest number"
+            name="guest_count"
             rules={[{ required: true }]}
           >
             <InputNumber
@@ -370,14 +412,10 @@ class SelectAmenityButton extends React.Component {
               </Row>
               <Row>
                 <Col span={8}>
-                  <Checkbox indeterminate disabled value="8">
-                    11:00 AM - 11:30 AM
-                  </Checkbox>
+                  <Checkbox value="8">11:00 AM - 11:30 AM</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox indeterminate disabled value="9">
-                    11:30 AM - 12:00 PM
-                  </Checkbox>
+                  <Checkbox value="9">11:30 AM - 12:00 PM</Checkbox>
                 </Col>
               </Row>
               <Row>
@@ -385,9 +423,7 @@ class SelectAmenityButton extends React.Component {
                   <Checkbox value="10">12:00 PM - 12:30 PM</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox indeterminate disabled value="11">
-                    12:30 PM - 01:00 PM
-                  </Checkbox>
+                  <Checkbox value="11">12:30 PM - 01:00 PM</Checkbox>
                 </Col>
               </Row>
               <Row>
@@ -424,14 +460,10 @@ class SelectAmenityButton extends React.Component {
               </Row>
               <Row>
                 <Col span={8}>
-                  <Checkbox indeterminate disabled value="20">
-                    05:00 PM - 05:30 PM
-                  </Checkbox>
+                  <Checkbox value="20">05:00 PM - 05:30 PM</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox indeterminate disabled value="21">
-                    05:30 AM - 06:00 AM
-                  </Checkbox>
+                  <Checkbox value="21">05:30 AM - 06:00 AM</Checkbox>
                 </Col>
               </Row>
               <Row>
@@ -453,286 +485,6 @@ class SelectAmenityButton extends React.Component {
             </Checkbox.Group>
           </Form.Item>
 
-          <Form.Item
-            label="Available Slots"
-            name="Time Slot"
-            // layout="vertical"
-            rules={[{ required: true }]}
-          >
-            <Radio.Group
-              buttonStyle="solid"
-              style={{
-                marginTop: 0,
-              }}
-            >
-              {" "}
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="0"
-              >
-                07:00 AM - 07:30 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="1"
-              >
-                07:30 AM - 08:00 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="2"
-              >
-                08:00 AM - 08:30 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="3"
-              >
-                08:30 AM - 09:00 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="4"
-              >
-                09:00 AM - 09:30 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="5"
-              >
-                09:30 AM- 10:00 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="6"
-              >
-                10:00 AM - 10:30 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="7"
-              >
-                10:30 AM - 11:00 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="8"
-                disabled
-              >
-                11:00 AM - 11:30 AM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="9"
-                disabled
-              >
-                11:30 AM - 12:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="10"
-              >
-                12:00 PM - 12:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="11"
-                disabled
-              >
-                12:30 PM - 01:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="12"
-              >
-                01:00 PM - 01:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="13"
-              >
-                01:30 PM - 02:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="14"
-              >
-                02:00 PM - 02:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="15"
-              >
-                02:30 PM - 03:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="16"
-              >
-                03:00 PM - 03:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="17"
-              >
-                03:30 PM - 04:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="18"
-              >
-                04:00 PM - 04:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="19"
-              >
-                04:30 PM - 05:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="20"
-                disabled
-              >
-                05:00 PM - 05:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="21"
-                disabled
-              >
-                05:30 PM - 06:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="22"
-              >
-                06: 00 PM - 06:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="23"
-              >
-                06:30 PM - 07:00 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="24"
-              >
-                07:00 PM - 07:30 PM
-              </Radio.Button>
-              <Radio.Button
-                style={{
-                  marginTop: 0,
-                  width: 180,
-                  height: 30,
-                }}
-                value="25"
-              >
-                07:30 PM - 08:00 PM
-              </Radio.Button>
-            </Radio.Group>
-          </Form.Item>
           <Form.Item {...tailLayout}>
             <Button
               loading={this.state.loading}
@@ -742,9 +494,6 @@ class SelectAmenityButton extends React.Component {
               Book
             </Button>
           </Form.Item>
-          {/* <Form>
-              <TimeSeletButton />
-            </Form> */}
         </Form>
       </>
     );
@@ -767,3 +516,37 @@ const AmenitiesPage = () => (
 );
 
 export default AmenitiesPage;
+
+const data = [
+  { name: "Gym", amenityId: "1", capacity: "15", Image: "./img/gym.jpeg" },
+  {
+    name: "Game Room",
+    amenityId: "2",
+    capacity: "5",
+    Image: "./img/game.jpeg",
+  },
+  {
+    name: "Meeting Room",
+    amenityId: "3",
+    capacity: "10",
+    Image: "./img/meetingroom.jpeg",
+  },
+  {
+    name: "Yoga Room",
+    amenityId: "4",
+    capacity: "20",
+    Image: "./img/yoga.jpeg",
+  },
+  {
+    name: "Kids Room",
+    amenityId: "5",
+    capacity: "15",
+    Image: "./img/kids.jpeg",
+  },
+  { name: "Pool", amenityId: "6", capacity: "10", Image: "./img/pool.jpeg" },
+];
+
+const timeSolt = [
+  { value: "0", startTime: "7:00", endTime: "7:30" },
+  { value: "1", startTime: "7:30", endTime: "8:00" },
+];
