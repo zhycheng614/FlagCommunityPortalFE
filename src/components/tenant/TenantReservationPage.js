@@ -135,18 +135,6 @@ class TenantReservationPage extends React.Component {
 
 export default TenantReservationPage;
 
-const statusStyle = [
-  {
-    fontColor: "#00FF00",
-  },
-  {
-    fontColor: "#0000FF",
-  },
-  {
-    fontColor: "#888888",
-  },
-];
-
 const data = [
   {
     amenity_name: "Party Room",

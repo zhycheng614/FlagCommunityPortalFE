@@ -55,28 +55,6 @@ class AllReservations extends React.Component {
     this.loadData();
   }
 
-  //暂时
-
-  // renderStatus = (item) => {
-  //   let colorStyle = "";
-  //   switch (item.status) {
-  //     case "Submitted":
-  //       colorStyle = statusStyle[0];
-  //       break;
-  //     case "Distributed":
-  //       colorStyle = statusStyle[1];
-  //       break;
-  //     case "Completed":
-  //       colorStyle = statusStyle[2];
-  //       break;
-  //   }
-  //   return (
-  //     <Text style={{ color: colorStyle.fontColor, fontWeight: 700 }}>
-  //       {item.status}
-  //     </Text>
-  //   );
-  // };
-
   loadData = async () => {
     this.setState({
       loading: true,
@@ -151,18 +129,6 @@ class ManagerReservationPage extends React.Component {
 }
 
 export default ManagerReservationPage;
-
-const statusStyle = [
-  {
-    fontColor: "#00FF00",
-  },
-  {
-    fontColor: "#0000FF",
-  },
-  {
-    fontColor: "#888888",
-  },
-];
 
 const data = [
   {
