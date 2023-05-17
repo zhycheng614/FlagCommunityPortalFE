@@ -11,6 +11,7 @@ import TenantMaintenance from "./TenantMaintenance";
 import TenantReservationPage from "./TenantReservationPage";
 import TenantPaymentPage from "./TenantPaymentPage";
 import Dashboard from "./TenantDashboard";
+import TenantForumPage from "./TenantForumPage";
 
 const { Content, Sider } = Layout;
 
@@ -60,7 +61,7 @@ const TenantHomePage = () => {
         setSelectedMenuItem(<TenantPaymentPage />);
         break;
       case "forum":
-        setSelectedMenuItem("forum");
+        setSelectedMenuItem(<TenantForumPage />);
         break;
     }
   };
