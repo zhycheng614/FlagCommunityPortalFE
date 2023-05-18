@@ -60,7 +60,7 @@ class MyReservations extends React.Component {
       loading: true,
     });
     try {
-      const resp = await getReservationsByUser(this.props.username);
+      const resp = await getReservationsByUser();
       this.setState({
         data: resp,
       });
@@ -91,7 +91,7 @@ class MyReservations extends React.Component {
             actions={[
               <CancelReservationButton
                 onCancelSuccess={this.loadData}
-                username={item.id}
+                reservationId={item.reservation_id}
               />,
             ]}
           >
@@ -100,13 +100,13 @@ class MyReservations extends React.Component {
               description={
                 <>
                   <Text>
-                    Event: {item.reservation_name}, Reservation ID:
+                    Event: {item.reservationName}, Reservation ID:
                     {item.reservation_id}
                   </Text>
                   <br />
                   <Text>
-                    Date: {item.date}, Start Time: {item.start_time}, End Time:
-                    {item.end_time}
+                    Date: {item.date}, Start Time: {item.startTime}, End Time:
+                    {item.endTime}
                   </Text>
                 </>
               }
