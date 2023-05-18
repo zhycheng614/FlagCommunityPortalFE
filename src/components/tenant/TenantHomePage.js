@@ -72,7 +72,7 @@ const TenantHomePage = () => {
           mode="inline"
           onSelect={onMenuItemSelect}
           defaultSelectedKeys={["dashboard"]}
-          style={{ height: "100%", marginTop: "20px", fontSize: "18px" }}
+          style={{ height: "90%", marginTop: "20px", fontSize: "18px" }}
           items={tenantMenuItems}
         />
       </Sider>

@@ -13,6 +13,13 @@ import {
 import { MessageOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
+import {
+  claimTask,
+  completeMaintenance,
+  getMaintenanceClaimed,
+  getMaintenanceCompleted,
+  getMaintenanceSubmitted,
+} from "../../util";
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -40,7 +47,7 @@ const MessageButton = (props) => {
           icon={<MessageOutlined />}
         />
       </Tooltip>
-      {modalVisible && ( // JS special grammer
+      {modalVisible && (
         <Modal
           title="Provider's Message"
           centered={true}
@@ -67,16 +74,16 @@ const CompletedPane = () => {
   }, []);
 
   const loadData = async () => {
-    /* setLoading(true);
+    setLoading(true);
 
     try {
-      const resp = await getCompletedRecords(); // user information will be passed in with token
+      const resp = await getMaintenanceCompleted();
       setData(resp);
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
@@ -84,7 +91,7 @@ const CompletedPane = () => {
       loading={loading}
       pagination={{ pageSize: 10 }}
       grid={{ column: 1 }}
-      dataSource={testDataSource} // should replace it by data
+      dataSource={data}
       renderItem={(item) => (
         <List.Item>
           <Card
@@ -98,7 +105,7 @@ const CompletedPane = () => {
             }
             extra={
               <Space size="large">
-                <Text>{item.time}</Text>
+                <Text>{item.complete_date}</Text>
                 <Text style={{ color: "#888888", fontWeight: 700 }}>
                   Completed
                 </Text>
@@ -106,7 +113,7 @@ const CompletedPane = () => {
               </Space>
             }
           >
-            {item.description}
+            {item.issueDescription}
           </Card>
         </List.Item>
       )}
@@ -121,21 +128,16 @@ const CompleteButton = (props) => {
   const handleOnClick = async () => {
     const { record, onCompleteSuccess } = props;
 
-    // set message and state to record
-    record.status = "completed";
-    /* we may also set a new time based on the new state */
-
-    // call api to store the input to backend, and change state of it
     setLoading(true);
-    /* 
+
     try {
-      await updateRecord(record); // this api needs to be refined
-      onRespondSuccess();
+      await completeMaintenance(record.id);
+      onCompleteSuccess();
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
@@ -154,16 +156,16 @@ const RespondedPane = () => {
   }, []);
 
   const loadData = async () => {
-    /* setLoading(true);
+    setLoading(true);
 
     try {
-      const resp = await getRespondedRecords(); // user information will be passed in with token
-      setData(resp);
+      const resp = await getMaintenanceClaimed();
+      setData(resp.reverse());
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
@@ -171,7 +173,7 @@ const RespondedPane = () => {
       loading={loading}
       pagination={{ pageSize: 10 }}
       grid={{ column: 1 }}
-      dataSource={testDataSource2} // should replace it by data
+      dataSource={data}
       renderItem={(item) => (
         <List.Item>
           <Card
@@ -185,7 +187,7 @@ const RespondedPane = () => {
             }
             extra={
               <Space size="large">
-                <Text>{item.time}</Text>
+                <Text>{item.process_date}</Text>
                 <Text style={{ color: "#0000FF", fontWeight: 700 }}>
                   Responded
                 </Text>
@@ -194,7 +196,7 @@ const RespondedPane = () => {
               </Space>
             }
           >
-            {item.description}
+            {item.issueDescription}
           </Card>
         </List.Item>
       )}
@@ -212,22 +214,16 @@ const RespondButton = (props) => {
     setModalVisible(false);
     const { record, onRespondSuccess } = props;
 
-    // set message and state to record
-    record.message = inputMessage;
-    record.status = "distributed";
-    /* we may also set a new time based on the new state */
-
-    // call api to store the input to backend, and change state of it
     setLoading(true);
-    /* 
+
     try {
-      await updateRecord(record); // this api needs to be refined
+      await claimTask(record.id, inputMessage);
       onRespondSuccess();
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
@@ -272,16 +268,21 @@ const SubmittedPane = () => {
   }, []);
 
   const loadData = async () => {
-    /* setLoading(true);
+    setLoading(true);
 
     try {
-      const resp = await getsubmittedRecords(); // user information will be passed in with token
-      setData(resp);
+      const resp = await getMaintenanceSubmitted();
+      setData(resp.reverse());
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
+  };
+
+  const onRespondSuccess = () => {
+    loadData();
+    message.success("Responded successfully.");
   };
 
   return (
@@ -289,7 +290,7 @@ const SubmittedPane = () => {
       loading={loading}
       pagination={{ pageSize: 10 }}
       grid={{ column: 1 }}
-      dataSource={testDataSource} // should replace it by data
+      dataSource={data}
       renderItem={(item) => (
         <List.Item>
           <Card
@@ -303,16 +304,18 @@ const SubmittedPane = () => {
             }
             extra={
               <Space size="large">
-                <Text>{item.time}</Text>
+                <Text>{item.submit_date}</Text>
                 <Text style={{ color: "#00FF00", fontWeight: 700 }}>
                   Submmitted
                 </Text>
-                {/* <MessageButton maintenanceSheet={item} /> */}
-                <RespondButton record={item} onRespondSuccess={loadData} />
+                <RespondButton
+                  record={item}
+                  onRespondSuccess={onRespondSuccess}
+                />
               </Space>
             }
           >
-            {item.description}
+            {item.issueDescription}
           </Card>
         </List.Item>
       )}
@@ -337,89 +340,3 @@ const ProviderMaintenance = () => {
 };
 
 export default ProviderMaintenance;
-
-const testDataSource = [
-  {
-    id: 1,
-    title: "Ceiling Leak",
-    location: "501",
-    description: "My ceiling is leaking and I need help immediately.",
-    status: "Submitted",
-    time: "2023.5.1 16:38pm",
-    message: "",
-  },
-  {
-    id: 2,
-    title: "Pipe Leak",
-    location: "445",
-    description: "The water pipe is not working well.",
-    status: "Submitted",
-    time: "2023.5.1 19:38pm",
-    message: "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.",
-  },
-  {
-    id: 3,
-    title: "Broken Door",
-    location: "803",
-    description: "The door is not working.",
-    status: "Submitted",
-    time: "2023.5.1 13:59pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-  {
-    id: 4,
-    title: "Broken Door 2",
-    location: "803",
-    description: "The door is not working.",
-    status: "Submitted",
-    time: "2023.5.1 10:27pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-  {
-    id: 5,
-    title: "Broken Door 3",
-    location: "Central Garden",
-    description: "The door is not working.",
-    status: "Submitted",
-    time: "2023.5.1 19:33pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-];
-
-const testDataSource2 = [
-  {
-    id: 1,
-    title: "Ceiling Leak",
-    location: "501",
-    description: "My ceiling is leaking and I need help immediately.",
-    status: "Distributed",
-    time: "2023.5.1 16:38pm",
-    message: "",
-  },
-  {
-    id: 2,
-    title: "Pipe Leak",
-    location: "445",
-    description: "The water pipe is not working well.",
-    status: "Distributed",
-    time: "2023.5.1 19:38pm",
-    message: "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.",
-  },
-  {
-    id: 3,
-    title: "Broken Door",
-    location: "803",
-    description: "The door is not working.",
-    status: "Distributed",
-    time: "2023.5.1 13:59pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-];
