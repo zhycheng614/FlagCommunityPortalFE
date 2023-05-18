@@ -13,64 +13,11 @@ import { MessageOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
 import CreateNewMaintenance from "./CreateNewMaintenance";
+import { deleteMaintenance, getMaintenanceByUser } from "../../util";
 
 const { TabPane } = Tabs;
 
-const testDataSource = [
-  {
-    id: 1,
-    title: "Ceiling Leak",
-    location: "501",
-    description: "My ceiling is leaking and I need help immediately.",
-    status: "Submitted",
-    time: "2023.5.1 16:38pm",
-    message: "",
-  },
-  {
-    id: 2,
-    title: "Pipe Leak",
-    location: "445",
-    description: "The water pipe is not working well.",
-    status: "Distributed",
-    time: "2023.5.1 19:38pm",
-    message: "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.",
-  },
-  {
-    id: 3,
-    title: "Broken Door",
-    location: "803",
-    description: "The door is not working.",
-    status: "Completed",
-    time: "2023.5.1 13:59pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-  {
-    id: 4,
-    title: "Broken Door 2",
-    location: "803",
-    description: "The door is not working.",
-    status: "Completed",
-    time: "2023.5.1 10:27pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-  {
-    id: 5,
-    title: "Broken Door 3",
-    location: "803",
-    description: "The door is not working.",
-    status: "Completed",
-    time: "2023.5.1 19:33pm",
-    message:
-      "I'll go to your home on Friday 10 am. My phone is: 606-614-8523.\
-    If you have any questions, please feel free to call me.",
-  },
-];
-
-const MessageButton = (props) => {
+export const MessageButton = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const message = props.maintenanceSheet.message;
@@ -116,17 +63,15 @@ const DeleteButton = (props) => {
 
   const handleDelete = async () => {
     const { record, onDeleteSuccess } = props;
-
-    /*     setLoading(true);
-
+    setLoading(true);
     try {
-      await deleteRecord(record.id);
+      await deleteMaintenance(record.id);
       onDeleteSuccess();
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
@@ -164,35 +109,46 @@ export const RecordPane = () => {
 
   const renderStatus = (item) => {
     let colorStyle = "";
+    let statusDate = "";
+    let status = "";
     switch (item.status) {
-      case "Submitted":
+      case "submitted":
         colorStyle = statusStyle[0];
+        statusDate = item.submit_date;
+        status = "Submitted";
         break;
-      case "Distributed":
+      case "In Progress":
         colorStyle = statusStyle[1];
+        statusDate = item.process_date;
+        status = "In Progress";
         break;
-      case "Completed":
+      case "complete":
         colorStyle = statusStyle[2];
+        statusDate = item.complete_date;
+        status = "Completed";
         break;
     }
     return (
-      <Text style={{ color: colorStyle.fontColor, fontWeight: 700 }}>
-        {item.status}
-      </Text>
+      <>
+        <Text>{statusDate}</Text>
+        <Text style={{ color: colorStyle.fontColor, fontWeight: 700 }}>
+          {status}
+        </Text>
+      </>
     );
   };
 
   const loadData = async () => {
-    /* setLoading(true);
+    setLoading(true);
 
     try {
-      const resp = await getMaintenanceByUser(username); // user information will be passed in with token
-      setData(resp);
+      const resp = await getMaintenanceByUser();
+      setData(resp.reverse());
     } catch (error) {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   const onDeleteSuccess = () => {
@@ -203,9 +159,9 @@ export const RecordPane = () => {
   return (
     <List
       loading={loading}
-      pagination={{ pageSize: 3 }}
+      pagination={{ pageSize: 10 }}
       grid={{ column: 1 }}
-      dataSource={testDataSource} // should replace it by data
+      dataSource={data}
       renderItem={(item) => (
         <List.Item>
           <Card
@@ -219,14 +175,13 @@ export const RecordPane = () => {
             }
             extra={
               <Space size="large">
-                <Text>{item.time}</Text>
                 {renderStatus(item)}
                 <MessageButton maintenanceSheet={item} />
                 <DeleteButton record={item} onDeleteSuccess={onDeleteSuccess} />
               </Space>
             }
           >
-            {item.description}
+            {item.issueDescription}
           </Card>
         </List.Item>
       )}

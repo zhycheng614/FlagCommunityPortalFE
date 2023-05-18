@@ -1,5 +1,6 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { useState } from "react";
+import { addMaintenance } from "../../util";
 
 const layout = {
   labelCol: { span: 6 },
@@ -11,7 +12,7 @@ const CreateNewMaintenance = (props) => {
   const { asManager } = props;
 
   const handleSubmit = async (values) => {
-    /*     setLoading(true);
+    setLoading(true);
 
     try {
       await addMaintenance(values);
@@ -20,7 +21,7 @@ const CreateNewMaintenance = (props) => {
       message.error(error.message);
     } finally {
       setLoading(false);
-    } */
+    }
   };
 
   return (
@@ -29,21 +30,25 @@ const CreateNewMaintenance = (props) => {
       name="nest-messages"
       onFinish={handleSubmit} // data collected by antd automatically on finish
       style={{ maxWidth: 1000, margin: "auto" }}
+      initialValues={{
+        location: asManager ? "" : localStorage.getItem("apartmentNumber"),
+      }}
     >
+      <Form.Item name="title" label="Issue Title" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
       <Form.Item name="location" label="Location" rules={[{ required: true }]}>
-        <Input
-          disabled={!asManager}
-          defaultValue={
-            asManager ? "" : localStorage.getItem("apartmentNumber")
-          }
-        />
+        <Input disabled={!asManager} />
       </Form.Item>
       <Form.Item
-        name="issue_description"
+        name="issueDescription"
         label="Issue Description"
         rules={[{ required: true }]}
       >
-        <Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
+        <Input.TextArea
+          autoSize={{ minRows: 2, maxRows: 6 }}
+          placeholder="Add issue description and availbale time that you want it to be fixed. e.g.: I'm available in the afternoons this week."
+        />
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
         <Button type="primary" htmlType="submit" loading={loading}>
