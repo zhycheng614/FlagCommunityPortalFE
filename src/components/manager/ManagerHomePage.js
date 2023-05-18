@@ -89,12 +89,6 @@ const ManagerHomePage = () => {
       case "management":
         setSelectedMenuItem("management");
         break;
-      case "announcement":
-        setSelectedMenuItem(<ManagerAnnouncementPage />);
-        break;
-      case "management":
-        setSelectedMenuItem("management");
-        break;
     }
   };
 
