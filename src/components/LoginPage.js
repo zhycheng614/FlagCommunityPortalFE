@@ -44,7 +44,7 @@ const LoginPage = (props) => {
       // call utils function to send request
       const resp = await login(formInstance.getFieldsValue(true), authority);
       // this function is passed in from parent: App.js
-      handleLoginSuccess(resp.token, authority);
+      handleLoginSuccess(resp.apartmentNumber, resp.token, authority);
     } catch (error) {
       message.error(error.message);
     } finally {

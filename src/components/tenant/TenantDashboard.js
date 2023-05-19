@@ -99,7 +99,7 @@ export const AnnouncementBlock = () => {
       }
     >
       <Table
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 7 }}
         loading={loading}
         columns={columns}
         dataSource={data[0]}

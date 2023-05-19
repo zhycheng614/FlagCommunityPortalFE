@@ -1,6 +1,5 @@
 import { Layout } from "antd";
 import ManagerMaintenance from "./ProviderMaintenance";
-import ProviderAnnouncement from "./ProviderAnnouncement";
 
 const { Content, Sider } = Layout;
 

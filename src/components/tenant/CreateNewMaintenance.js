@@ -26,7 +26,7 @@ const CreateNewMaintenance = (props) => {
 
   return (
     <Form
-      {...layout} // unfold layout object
+      {...layout}
       name="nest-messages"
       onFinish={handleSubmit} // data collected by antd automatically on finish
       style={{ maxWidth: 1000, margin: "auto" }}
