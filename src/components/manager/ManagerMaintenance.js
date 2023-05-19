@@ -47,7 +47,7 @@ export const AllRecordsPane = () => {
         statusDate = item.submit_date;
         status = "Submitted";
         break;
-      case "in progress":
+      case "In Progress":
         colorStyle = statusStyle[1];
         statusDate = item.process_date;
         status = "In Progress";
@@ -98,8 +98,8 @@ export const AllRecordsPane = () => {
             key={item.id}
             title={
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Text ellipsis={true} style={{ maxWidth: 150 }}>
-                  {item.title}
+                <Text ellipsis={true} style={{ maxWidth: 300 }}>
+                  {`${item.title}\u00A0\u00A0\u00A0@${item.location}`}
                 </Text>
               </div>
             }
@@ -110,7 +110,7 @@ export const AllRecordsPane = () => {
               </Space>
             }
           >
-            {item.description}
+            {item.issueDescription}
           </Card>
         </List.Item>
       )}

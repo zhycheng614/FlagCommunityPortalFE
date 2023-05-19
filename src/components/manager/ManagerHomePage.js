@@ -14,6 +14,8 @@ import ManagerReservationPage from "./ManagerReservationPage.js";
 import ManagerPaymentPage from "./ManagerPaymentPage.js";
 import ManagerAnnouncementPage from "./ManagerAnnouncementPage.js";
 import ManagerAssignmentPage from "./ManagerAssignmentPage.js";
+import TenantForumPage from "../tenant/TenantForumPage.js";
+import ManagerDashboard from "./ManagerDashboard.js";
 
 const { Content, Sider } = Layout;
 
@@ -26,7 +28,7 @@ const managerMenuItems = [
   {
     label: "Room Assignment",
     key: "assignment",
-    //icon: <UserOutlined />,
+    icon: <SolutionOutlined />,
   },
   {
     label: "Maintenance",
@@ -53,20 +55,17 @@ const managerMenuItems = [
     key: "announcement",
     icon: <NotificationOutlined />,
   },
-  {
-    label: "Management",
-    key: "management",
-    icon: <SolutionOutlined />,
-  },
 ];
 
 const ManagerHomePage = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("dashboard");
+  const [selectedMenuItem, setSelectedMenuItem] = useState(
+    <ManagerDashboard />
+  );
 
   const onMenuItemSelect = ({ key }) => {
     switch (key) {
       case "dashboard":
-        setSelectedMenuItem("dashboard");
+        setSelectedMenuItem(<ManagerDashboard />);
         break;
       case "assignment":
         setSelectedMenuItem(<ManagerAssignmentPage />);
@@ -81,13 +80,10 @@ const ManagerHomePage = () => {
         setSelectedMenuItem(<ManagerPaymentPage />);
         break;
       case "forum":
-        setSelectedMenuItem("ManagerForumPage");
+        setSelectedMenuItem(<TenantForumPage />);
         break;
       case "announcement":
         setSelectedMenuItem(<ManagerAnnouncementPage />);
-        break;
-      case "management":
-        setSelectedMenuItem("management");
         break;
     }
   };

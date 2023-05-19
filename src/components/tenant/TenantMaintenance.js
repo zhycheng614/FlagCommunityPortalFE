@@ -40,7 +40,7 @@ export const MessageButton = (props) => {
           icon={<MessageOutlined />}
         />
       </Tooltip>
-      {modalVisible && ( // JS special grammer
+      {modalVisible && (
         <Modal
           title="Provider's Message"
           centered={true}
