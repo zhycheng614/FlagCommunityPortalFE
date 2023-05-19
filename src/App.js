@@ -5,18 +5,19 @@ import TenantHomePage from "./components/tenant/TenantHomePage";
 import ManagerHomePage from "./components/manager/ManagerHomePage";
 import ProviderHomePage from "./components/provider/ProviderHomePage";
 import LoginPage from "./components/LoginPage";
+import Text from "antd/lib/typography/Text";
 
 const { Header } = Layout;
 
 const App = () => {
-  const [authed, setAuthed] = useState(true);
-  const [authority, setAuthority] = useState("tenant");
+  const [authed, setAuthed] = useState(false);
+  const [authority, setAuthority] = useState("");
 
   // function that will be passed to login component and called after login
-  const handleLoginSuccess = (token, authority) => {
+  const handleLoginSuccess = (apartmentNumber, token, authority) => {
     if (authority === "tenant") {
       localStorage.setItem("authToken", token.token);
-      localStorage.setItem("apartmentNumber", token.apartmentNumber);
+      localStorage.setItem("apartmentNumber", apartmentNumber);
     } else {
       localStorage.setItem("authToken", token);
     }
@@ -70,6 +71,9 @@ const App = () => {
           {authed && (
             <div>
               <Dropdown trigger="click" overlay={userMenu}>
+                {/* <Text>
+                  Apartment Number: {localStorage.getItem("apartmentNumber")}
+                </Text> */}
                 <Button icon={<UserOutlined />} shape="circle" />
               </Dropdown>
             </div>

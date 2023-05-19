@@ -47,14 +47,94 @@ export const register = (credential, identity) => {
   });
 };
 
+export const moveIn = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveIn?username=${values.tenant}&apartmentNumber=${values.apt}`;
+  console.log(flatUrl);
+  return fetch(flatUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move in");
+    }
+    return response;
+  });
+};
+
+export const moveOut = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveOut?username=${values.tenant}`;
+  return fetch(flatUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move out");
+    }
+    return response;
+  });
+};
+
+export const moveInAndAssign = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveInAndAssignNewOwner?username=${values.tenant}&apartmentNumber=${values.apt}&newOwnerUsername=${values.owner}`;
+  return fetch(flatUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move in");
+    }
+    return response;
+  });
+};
+
+export const moveOutAndAssign = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/moveOutAndAssignNewOwner?username=${values.tenant}&newOwnerUsername=${values.owner}`;
+  return fetch(flatUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to move out");
+    }
+    return response;
+  });
+};
+
+export const getFlatMate = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/getFlatmates?username=${values.username}`;
+  return fetch(flatUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get flat mates");
+    }
+    return response.json();
+  });
+};
+
 /**
- * Get all maintenance records
+ * Get all maintenance records - by manager
  *
  * @returns {Promise} A Promise that resolves to an array of maintenance objects returned by the server.
  */
 export const getMaintenance = () => {
   const authToken = localStorage.getItem("authToken");
-  const listMaintenancesUrl = `${domain}/maintenance`;
+  const listMaintenancesUrl = `${domain}/orders/findAll`;
   return fetch(listMaintenancesUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -68,14 +148,13 @@ export const getMaintenance = () => {
 };
 
 /**
- * Get maintenance records by username
+ * Get maintenance records by username - either by tenant or manager
  *
- * @param {string} username - The username of the user whose maintenance records are to be retrieved.
  * @returns {Promise} A Promise that resolves to an array of maintenance objects returned by the server.
  */
-export const getMaintenanceByUser = (username) => {
+export const getMaintenanceByUser = () => {
   const authToken = localStorage.getItem("authToken");
-  const listMaintenancesUrl = `${domain}/maintenance/${username}`;
+  const listMaintenancesUrl = `${domain}/orders`;
   return fetch(listMaintenancesUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -89,13 +168,53 @@ export const getMaintenanceByUser = (username) => {
 };
 
 /**
- * Get maintenance records with status of submitted
+ * Get maintenance records with status of submitted - unclaimed
  *
  * @returns {Promise} A Promise that resolves to an array of maintenance objects returned by the server.
  */
 export const getMaintenanceSubmitted = () => {
   const authToken = localStorage.getItem("authToken");
-  const listMaintenancesUrl = `${domain}/maintenance/submitted`;
+  const listMaintenancesUrl = `${domain}/orders/findAllUnclaimed`;
+  return fetch(listMaintenancesUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get maintenance list");
+    }
+    return response.json();
+  });
+};
+
+/**
+ * Get maintenance records with status of responded - unclaimed by provider
+ *
+ * @returns {Promise} A Promise that resolves to an array of maintenance objects returned by the server.
+ */
+export const getMaintenanceClaimed = () => {
+  const authToken = localStorage.getItem("authToken");
+  const listMaintenancesUrl = `${domain}/orders/orderClaimed`;
+  return fetch(listMaintenancesUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get maintenance list");
+    }
+    return response.json();
+  });
+};
+
+/**
+ * Get maintenance records with status of responded - completed by provider
+ *
+ * @returns {Promise} A Promise that resolves to an array of maintenance objects returned by the server.
+ */
+export const getMaintenanceCompleted = () => {
+  const authToken = localStorage.getItem("authToken");
+  const listMaintenancesUrl = `${domain}/orders/orderCompleted`;
   return fetch(listMaintenancesUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -116,7 +235,7 @@ export const getMaintenanceSubmitted = () => {
  */
 export const addMaintenance = (data) => {
   const authToken = localStorage.getItem("authToken");
-  const addMaintenanceUrl = `${domain}/maintenance`;
+  const addMaintenanceUrl = `${domain}/orders`;
   return fetch(addMaintenanceUrl, {
     method: "POST",
     headers: {
@@ -139,7 +258,10 @@ export const addMaintenance = (data) => {
  */
 export const deleteMaintenance = (maintenanceId) => {
   const authToken = localStorage.getItem("authToken");
-  const deleteMaintenanceUrl = `${domain}/maintenance/${maintenanceId}`;
+  const deleteMaintenanceUrl = `${domain}/orders?order_id=${maintenanceId}`;
+  // const deleteMaintenanceUrl = new URL(`${domain}/orders/`);
+  // const deleteMaintenanceUrl = new URL(`orders/`);
+  // deleteMaintenanceUrl.searchParams.append("order_id", maintenanceId);
   return fetch(deleteMaintenanceUrl, {
     method: "DELETE",
     headers: {
@@ -147,27 +269,28 @@ export const deleteMaintenance = (maintenanceId) => {
     },
   }).then((response) => {
     if (response.status !== 200) {
-      throw Error("Fail to delete maintenance record");
+      throw Error("Fail to delete maintenance record.");
     }
   });
 };
 
 /**
- * Provider responds to tenant with a message
+ * Provider responds to tenant with a message & provider claim task
  *
- * @param {object} data - maintenance ID,status to be updated, processing time, provider notes
+ * @param {object} orderId - maintenance ID,status to be updated, processing time, provider notes
  * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
  */
-export const sendMessage = (data) => {
+export const claimTask = (orderId, inputMessage) => {
+  // provider name hardcode
   const authToken = localStorage.getItem("authToken");
-  const updateMaintenanceUrl = `${domain}/maintenance/message`;
-  return fetch(updateMaintenanceUrl, {
+  const claimTaskUrl = `${domain}/orders/claim?order_id=${orderId}`;
+  return fetch(claimTaskUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${authToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(inputMessage),
   }).then((response) => {
     if (response.status !== 200) {
       throw Error("Fail to update maintenance status");
@@ -178,19 +301,17 @@ export const sendMessage = (data) => {
 /**
  * Complete a maintenance record
  *
- * @param {object} data - maintenance ID,status to be updated
+ * @param {object} order - maintenance ID to be updated
  * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
  */
-export const completeMaintenance = (data) => {
+export const completeMaintenance = (orderId) => {
   const authToken = localStorage.getItem("authToken");
-  const updateMaintenanceUrl = `${domain}/maintenance/update`;
-  return fetch(updateMaintenanceUrl, {
+  const completeMaintenanceUrl = `${domain}/orders/complete?order_id=${orderId}`;
+  return fetch(completeMaintenanceUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${authToken}`,
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
   }).then((response) => {
     if (response.status !== 200) {
       throw Error("Fail to update maintenance status");
@@ -225,7 +346,7 @@ export const getAmenity = () => {
  */
 export const getReservations = () => {
   const authToken = localStorage.getItem("authToken");
-  const listReservationsUrl = `${domain}/reservation`;
+  const listReservationsUrl = `${domain}/reservation/today`;
   return fetch(listReservationsUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -244,9 +365,9 @@ export const getReservations = () => {
  * @param {string} username - The username of the user whose reservation are to be retrieved.
  * @returns {Promise} A Promise that resolves to an array of reservation objects returned by the server.
  */
-export const getReservationsByUser = (username) => {
+export const getReservationsByUser = () => {
   const authToken = localStorage.getItem("authToken");
-  const listReservationsUrl = `${domain}/reservation/${username}`;
+  const listReservationsUrl = `${domain}/reservation`;
   return fetch(listReservationsUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -267,7 +388,7 @@ export const getReservationsByUser = (username) => {
  */
 export const cancelReservation = (reservationId) => {
   const authToken = localStorage.getItem("authToken");
-  const cancelReservationUrl = `${domain}/reservation/${reservationId}`;
+  const cancelReservationUrl = `${domain}/reservation?reservation_id=${reservationId}`;
   return fetch(cancelReservationUrl, {
     method: "DELETE",
     headers: {

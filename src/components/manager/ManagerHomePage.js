@@ -13,6 +13,9 @@ import ManagerMaintenance from "./ManagerMaintenance.js";
 import ManagerReservationPage from "./ManagerReservationPage.js";
 import ManagerPaymentPage from "./ManagerPaymentPage.js";
 import ManagerAnnouncementPage from "./ManagerAnnouncementPage.js";
+import ManagerAssignmentPage from "./ManagerAssignmentPage.js";
+import TenantForumPage from "../tenant/TenantForumPage.js";
+import ManagerDashboard from "./ManagerDashboard.js";
 
 const { Content, Sider } = Layout;
 
@@ -21,6 +24,11 @@ const managerMenuItems = [
     label: "Dashboard",
     key: "dashboard",
     icon: <DashboardOutlined />,
+  },
+  {
+    label: "Room Assignment",
+    key: "assignment",
+    icon: <SolutionOutlined />,
   },
   {
     label: "Maintenance",
@@ -47,20 +55,20 @@ const managerMenuItems = [
     key: "announcement",
     icon: <NotificationOutlined />,
   },
-  {
-    label: "Management",
-    key: "management",
-    icon: <SolutionOutlined />,
-  },
 ];
 
 const ManagerHomePage = () => {
-  const [selectedMenuItem, setSelectedMenuItem] = useState("dashboard");
+  const [selectedMenuItem, setSelectedMenuItem] = useState(
+    <ManagerDashboard />
+  );
 
   const onMenuItemSelect = ({ key }) => {
     switch (key) {
       case "dashboard":
-        setSelectedMenuItem("dashboard");
+        setSelectedMenuItem(<ManagerDashboard />);
+        break;
+      case "assignment":
+        setSelectedMenuItem(<ManagerAssignmentPage />);
         break;
       case "maintenance":
         setSelectedMenuItem(<ManagerMaintenance />);
@@ -72,13 +80,10 @@ const ManagerHomePage = () => {
         setSelectedMenuItem(<ManagerPaymentPage />);
         break;
       case "forum":
-        setSelectedMenuItem("ManagerForumPage");
+        setSelectedMenuItem(<TenantForumPage />);
         break;
       case "announcement":
         setSelectedMenuItem(<ManagerAnnouncementPage />);
-        break;
-      case "management":
-        setSelectedMenuItem("management");
         break;
     }
   };
@@ -90,7 +95,7 @@ const ManagerHomePage = () => {
           mode="inline"
           onSelect={onMenuItemSelect}
           defaultSelectedKeys={["dashboard"]}
-          style={{ height: "100%", marginTop: "20px", fontSize: "18px" }}
+          style={{ height: "90%", marginTop: "20px", fontSize: "18px" }}
           items={managerMenuItems}
         />
       </Sider>
