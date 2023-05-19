@@ -1,7 +1,15 @@
 import { Button, Form, Select, message } from "antd";
 import { useState } from "react";
 // import { useForm } from "antd/lib/form/Form";
-import { findAssignedTenant, findAvailableApart, findUnassignedTenant, getFlatMate, moveIn, moveOut, moveOutAndAssign } from "../../util";
+import {
+  findAssignedTenant,
+  findAvailableApart,
+  findUnassignedTenant,
+  getFlatMate,
+  moveIn,
+  moveOut,
+  moveOutAndAssign,
+} from "../../util";
 
 const layout = {
   labelCol: { span: 6 },
@@ -20,18 +28,18 @@ const Move = () => {
 
   const handleSelectOwner = (event) => {
     setSelectedOwner(event);
-  }
+  };
 
   const handleSelectTenant = (event) => {
     setSelectedTenant(event);
-    console.log(event)
+    console.log(event);
     const searchFlatMate = async () => {
-      if (move === 'out') {
+      if (move === "out") {
         setLoading(true);
         try {
-          console.log(event)
+          console.log(event);
           const ownerData = await getFlatMate(event);
-          console.log(ownerData)
+          console.log(ownerData);
           if (ownerData) {
             setOwner(ownerData);
           }
@@ -43,8 +51,6 @@ const Move = () => {
     };
     searchFlatMate();
   };
-
-  
 
   const handleSelectApart = (event) => {
     setSelectedApart(event);
@@ -74,15 +80,14 @@ const Move = () => {
       setOwner([]);
       fetchInitialData();
     } else {
-      const fetchInitialData =async () => {
+      const fetchInitialData = async () => {
         setLoading(true);
         try {
           const assignedTenantData = await findAssignedTenant();
-          
+
           if (assignedTenantData) {
             setTenant(assignedTenantData);
           }
-          
         } catch (error) {
           console.error("Error:", error);
         }
@@ -93,7 +98,7 @@ const Move = () => {
       setOwner([]);
       fetchInitialData();
     }
-  }
+  };
 
   const handleSubmit = async (values) => {
     console.log(values);
@@ -137,12 +142,11 @@ const Move = () => {
         rules={[{ required: true }]}
         labelCol={{ span: 8, offset: 0 }}
       >
-        <Select value={move} onChange={handleMoveSelect}> 
+        <Select value={move} onChange={handleMoveSelect}>
           <Select.Option value="in">Move in</Select.Option>
           <Select.Option value="out">Move out</Select.Option>
         </Select>
       </Form.Item>
-
       <Form.Item
         name="tenant"
         label="Tenant"
@@ -150,15 +154,15 @@ const Move = () => {
         labelCol={{ span: 8, offset: 0 }}
       >
         <Select value={selectedTenant} onChange={handleSelectTenant}>
-        <Select.Option value="">Select tenant</Select.Option >
-        {tenant && Array.isArray(tenant) && // Check if tenant is defined and an array
-          tenant.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-        ))}
+          <Select.Option value="">Select tenant</Select.Option>
+          {tenant &&
+            Array.isArray(tenant) && // Check if tenant is defined and an array
+            tenant.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
         </Select>
-      
       </Form.Item>
       <Form.Item
         name="apt"
@@ -171,15 +175,19 @@ const Move = () => {
         ]}
         labelCol={{ span: 8, offset: 0 }}
       >
-        <Select value={selectedApart} onChange={handleSelectApart}
-          disable={move === "out"}>
-        <Select.Option  value="">Select apartment</Select.Option >
-        {vacantApart && Array.isArray(vacantApart) && // Check if tenant is defined and an array
-          vacantApart.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-        ))}
+        <Select
+          value={selectedApart}
+          onChange={handleSelectApart}
+          disable={move === "out"}
+        >
+          <Select.Option value="">Select apartment</Select.Option>
+          {vacantApart &&
+            Array.isArray(vacantApart) && // Check if tenant is defined and an array
+            vacantApart.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
         </Select>
       </Form.Item>
       <Form.Item
@@ -187,15 +195,19 @@ const Move = () => {
         label="New Apartment Owner"
         labelCol={{ span: 8, offset: 0 }}
       >
-        <Select value={selectedOwner} onChange={handleSelectOwner}
-          disable={move === "in"}>
-        <Select.Option  value="">Select new owner</Select.Option >
-        {owner && Array.isArray(owner) && // Check if tenant is defined and an array
-          owner.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
-        ))}
+        <Select
+          value={selectedOwner}
+          onChange={handleSelectOwner}
+          disable={move === "in"}
+        >
+          <Select.Option value="">Select new owner</Select.Option>
+          {owner &&
+            Array.isArray(owner) && // Check if tenant is defined and an array
+            owner.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
         </Select>
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
