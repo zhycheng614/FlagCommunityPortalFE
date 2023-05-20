@@ -39,6 +39,7 @@ export class MyReservationsBlock extends React.Component {
     return (
       <Card
         style={{
+          height: "100%",
           margin: "10px",
         }}
         title={

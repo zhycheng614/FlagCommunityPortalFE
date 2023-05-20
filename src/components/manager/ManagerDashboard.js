@@ -90,12 +90,19 @@ const ManagerDashboard = () => {
       <div style={{ width: "50%", height: "50%", float: "left" }}>
         <MaintenanceBlock rows={3} />
       </div>
-      <div style={{ width: "50%", height: "50%", float: "left" }}>
+      <div
+        style={{
+          width: "50%",
+          height: "50%",
+          float: "left",
+          marginTop: "10px",
+        }}
+      >
         <AllReservationsBlock />
       </div>
-      <div style={{ width: "50%", height: "50%", float: "left" }}>
+      {/* <div style={{ width: "50%", height: "50%", float: "left" }}>
         <PaymentBlock />
-      </div>
+      </div> */}
     </>
   );
 };

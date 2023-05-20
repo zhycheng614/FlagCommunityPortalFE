@@ -432,7 +432,8 @@ export const getReservations = () => {
     return response.json();
   });
 };
-export const getReservationsByDate = (date,amenity_id) => {
+
+export const getReservationsByDate = (date, amenity_id) => {
   const authToken = localStorage.getItem("authToken");
   const listReservationsUrl = `${domain}/reservation/date?date=${date}&amenity_id=${amenity_id}`;
   return fetch(listReservationsUrl, {
@@ -559,9 +560,9 @@ export const getPaymentByUser = (username) => {
  * @param {object} data - The data to be sent to the server.
  * @returns {Promise} A promise that resolves with no value if the request is successful, or rejects with an error message if it fails.
  */
-export const addPayment = (data) => {
+export const addPayment = (data, apartType, invoiceType) => {
   const authToken = localStorage.getItem("authToken");
-  const bookStayUrl = `${domain}/payment`;
+  const bookStayUrl = `${domain}/payment/add/category?apart_type=${apartType}&invoice_type=${invoiceType}`;
   return fetch(bookStayUrl, {
     method: "POST",
     headers: {
@@ -622,7 +623,6 @@ export const getAllPost = () => {
 /**
  * Get posts/announcements made by user
  *
- * @param {string} username - The username of the user whose posts are to be retrieved.
  * @returns {Promise} A Promise that resolves to an array of post objects returned by the server.
  */
 export const getPostByUser = () => {

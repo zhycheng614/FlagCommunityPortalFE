@@ -44,19 +44,10 @@ const CreateNewPost = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
-    console.log(values);
     setLoading(true);
 
     try {
-      if (values.dropdown == "sec") {
-        await "secondhand(values)";
-      } else if (values.dropdown == "los") {
-        await "localStorage(values)";
-      } else if (values.dropdown == "com") {
-        await "communi(values)";
-      } else if (values.dropdown == "others") {
-        await "other(values)";
-      }
+      await addPost(values);
       message.success("Submitted successfully.");
     } catch (error) {
       message.error(error.message);
@@ -77,16 +68,19 @@ const CreateNewPost = () => {
       </Form.Item>
 
       <Form.Item
+        // style={{ width: "300px" }}
         name="category"
-        label="category"
+        label="Category"
         rules={[{ required: true }]}
-        labelCol={{ span: 8, offset: 0 }}
+        // labelCol={{ span: 6, offset: 15 }}
       >
-        <Select>
-          <Select.Option value="sec">Second hand trading</Select.Option>
-          <Select.Option value="los">Lost and find</Select.Option>
-          <Select.Option value="com">Community</Select.Option>
-          <Select.Option value="others">Others</Select.Option>
+        <Select disabled={loading}>
+          <Select.Option value="Second Hand Trading">
+            Second Hand Trading
+          </Select.Option>
+          <Select.Option value="Lost & find">Lost & Found</Select.Option>
+          <Select.Option value="Community">Community</Select.Option>
+          <Select.Option value="Others">Others</Select.Option>
         </Select>
       </Form.Item>
 

@@ -81,8 +81,8 @@ export const MaintenanceBlock = ({ rows }) => {
       }}
       title={
         <div style={{ display: "flex", alignItems: "center" }}>
-          <Text ellipsis={true} style={{ maxWidth: 150 }}>
-            Maintenance
+          <Text ellipsis={true} style={{ maxWidth: 400 }}>
+            Maintenance In Progress
           </Text>
         </div>
       }
@@ -237,7 +237,7 @@ export const PaymentBlock = () => {
 
   return (
     <Card
-      style={{ margin: "10px" }}
+      style={{ height: "100%", margin: "10px" }}
       title={
         <div style={{ display: "flex", alignItems: "center" }}>
           <Text ellipsis={true} style={{ maxWidth: 150 }}>
@@ -247,9 +247,12 @@ export const PaymentBlock = () => {
       }
     >
       <Table
+        style={{ height: "0px" }}
+        showHeader={false}
         columns={columns}
         dataSource={unpaidDataSource}
         rowKey="id"
+        size="small"
         loading={loading}
       />
     </Card>
@@ -265,10 +268,24 @@ const TenantDashboard = () => {
       <div style={{ width: "50%", height: "33.3%", float: "left" }}>
         <MaintenanceBlock rows={2} />
       </div>
-      <div style={{ width: "50%", height: "33.3%", float: "left" }}>
+      <div
+        style={{
+          width: "50%",
+          height: "33.3%",
+          float: "left",
+          marginTop: "10px",
+        }}
+      >
         <MyReservationsBlock />
       </div>
-      <div style={{ width: "50%", height: "33.3%", float: "left" }}>
+      <div
+        style={{
+          width: "50%",
+          height: "33.3%",
+          float: "left",
+          marginTop: "10px",
+        }}
+      >
         <PaymentBlock />
       </div>
     </>
