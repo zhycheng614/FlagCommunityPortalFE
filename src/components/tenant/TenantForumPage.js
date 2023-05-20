@@ -12,7 +12,7 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
-import { getPostByUser, deletePost, addPost } from "../../util";
+import { getPostByUser, deletePost, addPost, getAllPost } from "../../util";
 
 const { TabPane } = Tabs;
 
@@ -25,10 +25,13 @@ const layout = {
 const TenantForumPage = () => {
   return (
     <Tabs defaultActiveKey="1" destroyInactiveTabPane={true}>
-      <TabPane tab="Create New" key="1">
+      <TabPane tab="All Posts" key="1">
+        <GetAllPosts />
+      </TabPane>
+      <TabPane tab="Create New" key="2">
         <CreateNewPost />
       </TabPane>
-      <TabPane tab="Manage All" key="2">
+      <TabPane tab="Manage All" key="3">
         <GetAllPostByUser />
       </TabPane>
     </Tabs>
@@ -164,6 +167,79 @@ const GetAllPostByUser = () => {
     try {
       const resp = await getPostByUser();
       setData(resp.reverse());
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const onDeleteSuccess = () => {
+    message.success("Record deleted successfully");
+    loadData();
+  };
+
+  const columns = [
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+
+    {
+      title: "Content",
+      dataIndex: "content",
+      key: "content",
+      render: (text, record, index) => (
+        <Space>
+          <Text>Details</Text>
+          <PostDetailButton post={data[index]} />
+        </Space>
+      ),
+    },
+
+    {
+      title: "Release Time",
+      key: "time",
+      dataIndex: "time",
+      align: "center",
+      width: "150px",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      align: "center",
+      width: "150px",
+      render: (text, record, index) => (
+        <DeleteButton post={data[index]} onDeleteSuccess={onDeleteSuccess} />
+      ),
+    },
+  ];
+
+  return <Table loading={loading} columns={columns} dataSource={data} />;
+};
+
+//6.show all posts
+const GetAllPosts = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const loadData = async () => {
+    setLoading(true);
+
+    try {
+      const allposts = await getAllPost();
+      setData(allposts.reverse());
     } catch (error) {
       message.error(error.message);
     } finally {
