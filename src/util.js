@@ -17,7 +17,6 @@ export const login = (credential, identity) => {
     credentials: "include",
     body: JSON.stringify(credential),
   }).then((response) => {
-    console.log(response.status);
     if (response.status !== 200) {
       throw Error("Fail to log in");
     }
@@ -47,10 +46,63 @@ export const register = (credential, identity) => {
   });
 };
 
+export const findAvailableApart = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/findApartmentsWithVacancy`;
+  return fetch(flatUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to find vacant apartments");
+    }
+    return response.text().then((data) => {
+      return JSON.parse(data); // Parse response body into an array
+    });
+  });
+};
+
+export const findUnassignedTenant = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/getTenantsWithoutApartments`;
+  return fetch(flatUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to find unassigned tenants");
+    }
+    return response.text().then((data) => {
+      return JSON.parse(data); // Parse response body into an array
+    });
+  });
+};
+
+export const findAssignedTenant = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/getTenantsWithApartments`;
+  return fetch(flatUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to find unassigned tenants");
+    }
+    return response.text().then((data) => {
+      return JSON.parse(data); // Parse response body into an array
+    });
+  });
+};
+
 export const moveIn = (values) => {
   const authToken = localStorage.getItem("authToken");
   const flatUrl = `${domain}/moveIn?username=${values.tenant}&apartmentNumber=${values.apt}`;
-  console.log(flatUrl);
   return fetch(flatUrl, {
     method: "PUT",
     headers: {
@@ -58,7 +110,9 @@ export const moveIn = (values) => {
     },
   }).then((response) => {
     if (response.status !== 200) {
-      throw Error("Fail to move in");
+          return response.text().then((errorMessage) => {
+          throw new Error(errorMessage);
+        });
     }
     return response;
   });
@@ -75,22 +129,6 @@ export const moveOut = (values) => {
   }).then((response) => {
     if (response.status !== 200) {
       throw Error("Fail to move out");
-    }
-    return response;
-  });
-};
-
-export const moveInAndAssign = (values) => {
-  const authToken = localStorage.getItem("authToken");
-  const flatUrl = `${domain}/moveInAndAssignNewOwner?username=${values.tenant}&apartmentNumber=${values.apt}&newOwnerUsername=${values.owner}`;
-  return fetch(flatUrl, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
-  }).then((response) => {
-    if (response.status !== 200) {
-      throw Error("Fail to move in");
     }
     return response;
   });
@@ -114,7 +152,7 @@ export const moveOutAndAssign = (values) => {
 
 export const getFlatMate = (values) => {
   const authToken = localStorage.getItem("authToken");
-  const flatUrl = `${domain}/getFlatmates?username=${values.username}`;
+  const flatUrl = `${domain}/getFlatmates?username=${values}`;
   return fetch(flatUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -123,8 +161,44 @@ export const getFlatMate = (values) => {
     if (response.status !== 200) {
       throw Error("Fail to get flat mates");
     }
-    return response.json();
+    return response.text().then((data) => {
+      return JSON.parse(data); // Parse response body into an array
+    });
   });
+};
+
+export const getFlatMateByTenant = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/getApartmentInfoByUsername?username=${values}`;
+  return fetch(flatUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      return response.text().then((errorMessage) => {
+        throw new Error(errorMessage);
+      });
+    }
+    return response.json();
+    });
+};
+
+export const getFlatMateByApart = (values) => {
+  const authToken = localStorage.getItem("authToken");
+  const flatUrl = `${domain}/getApartmentInfoByApartmentNumber?apartmentNumber=${values}`;
+  return fetch(flatUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      return response.text().then((errorMessage) => {
+        throw new Error(errorMessage);
+      });
+    }
+    return response.json();
+    });
 };
 
 /**
