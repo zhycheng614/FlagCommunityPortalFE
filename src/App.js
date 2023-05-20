@@ -55,7 +55,17 @@ const App = () => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="logout" onClick={handleLogOut}>
+      {localStorage.getItem("authority") === "tenant" && (
+        <Menu.Item key="apartmentNumber">
+          Apartment: {localStorage.getItem("apartmentNumber")}
+        </Menu.Item>
+      )}
+      <Menu.Item
+        style={{ textAlign: "center" }}
+        key="logout"
+        danger="true"
+        onClick={handleLogOut}
+      >
         Log Out
       </Menu.Item>
     </Menu>
