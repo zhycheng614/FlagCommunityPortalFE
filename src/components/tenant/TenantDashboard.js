@@ -1,12 +1,8 @@
-import { Button, Card, Space, Table, message } from "antd";
+import { Card, Space, Table, message } from "antd";
 import { PushpinOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
-import {
-  getAllAnnouncements,
-  getPaymentByUser,
-  updatePayment,
-} from "../../util";
+import { getAllAnnouncements, getPaymentByUser } from "../../util";
 import { ContentDetailButton } from "../manager/ManagerAnnouncementPage";
 
 export const AnnouncementBlock = () => {
