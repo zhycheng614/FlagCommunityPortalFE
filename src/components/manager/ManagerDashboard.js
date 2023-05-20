@@ -1,4 +1,5 @@
 import { AnnouncementBlock, MaintenanceBlock } from "../tenant/TenantDashboard";
+import { AllReservationsBlock } from "../manager/ManagerReservationPage";
 import React, { useState, useEffect } from "react";
 import { getPayment } from "../../util";
 import { Table, Card, Typography } from "antd";
@@ -80,8 +81,6 @@ export const PaymentBlock = () => {
   );
 };
 
-import { AllReservationsBlock } from "../manager/ManagerReservationPage";
-import React from "react";
 const ManagerDashboard = () => {
   return (
     <>
