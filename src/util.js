@@ -432,6 +432,20 @@ export const getReservations = () => {
     return response.json();
   });
 };
+export const getReservationsByDate = (date,amenity_id) => {
+  const authToken = localStorage.getItem("authToken");
+  const listReservationsUrl = `${domain}/reservation/date?date=${date}&amenity_id=${amenity_id}`;
+  return fetch(listReservationsUrl, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw Error("Fail to get reservation list");
+    }
+    return response.json();
+  });
+};
 
 /**
  * Get reservation records by username
