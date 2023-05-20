@@ -262,3 +262,22 @@ class ManagerReservationPage extends React.Component {
 }
 
 export default ManagerReservationPage;
+
+const data = [
+  {
+    amenity_name: "Party Room",
+    reservation_id: 141325234,
+    event_titile: "birthday party",
+    date: 5 / 3,
+    start_time: 1,
+    end_time: 2,
+  },
+  {
+    amenity_name: "Yoga Room",
+    reservation_id: 23411,
+    event_titile: "yoga class",
+    date: 5 / 25,
+    start_time: 1,
+    end_time: 2,
+  },
+];

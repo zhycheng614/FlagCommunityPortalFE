@@ -388,6 +388,153 @@ class SelectAmenityButton extends React.Component {
     }
   };
 
+  //   try {
+  //     const startTime = new Date(values["Time Slot"][0]);
+  //     const endTime = new Date(values["Time Slot"][1]);
+
+  //     // Perform the comparison or any other logic with startTime and endTime here
+
+  //     await addReservation({
+  //       date: values.date.format("YYYY-MM-DD"),
+  //       start_time: startTime.toISOString(), // Convert start_time to Date object
+  //       end_time: endTime.toISOString(), // Convert end_time to Date object
+  //       amenity: {
+  //         id: amenity.id,
+  //       },
+  //     });
+  //     message.success("Successfully booked amenity");
+  //   } catch (error) {
+  //     message.error(error.message);
+  //   } finally {
+  //     this.setState({
+  //       loading: false,
+  //     });
+  //   }
+  // };
+  handleSubmit = async (values) => {
+    const { amenity } = this.props;
+    this.setState({
+      loading: true,
+    });
+    console.log(values);
+    var data = [];
+    if (values.Location == "Gym") {
+      values.amenity_id = 1;
+    } else if (values.Location == "Game Room") {
+      values.amenity_id = 2;
+    } else if (values.Location == "Meeting Room") {
+      values.amenity_id = 3;
+    } else if (values.Location == "Yoga Room") {
+      values.amenity_id = 4;
+    } else if (values.Location == "Kids Room") {
+      values.amenity_id = 5;
+    } else if (values.Location == "Pool") {
+      values.amenity_id = 6;
+    }
+
+    values.TimeSlot.forEach((t) => {
+      var sj = {
+        date: values.Date.format("YYYY-MM-DD"),
+        amenityId: values.amenity_id,
+        guestCount: values.guest_count,
+        reservationName: values.Location,
+        startTime: "",
+        endTime: "",
+      };
+      if (t == 0) {
+        sj.startTime = "07:00 AM";
+        sj.endTime = "07:30 AM";
+      } else if (t == 1) {
+        sj.startTime = "07:30 AM";
+        sj.endTime = "08:00 AM";
+      } else if (t == 2) {
+        sj.startTime = "08:00 AM";
+        sj.endTime = "08:30 AM";
+      } else if (t == 3) {
+        sj.startTime = "08:30 AM";
+        sj.endTime = "09:00 AM";
+      } else if (t == 4) {
+        sj.startTime = "09:00 AM";
+        sj.endTime = "09:30 AM";
+      } else if (t == 5) {
+        sj.startTime = "09:30 AM";
+        sj.endTime = "10:00 AM";
+      } else if (t == 6) {
+        sj.startTime = "10:00 AM";
+        sj.endTime = "10:30 AM";
+      } else if (t == 7) {
+        sj.startTime = "10:30 AM";
+        sj.endTime = "11:00 AM";
+      } else if (t == 8) {
+        sj.startTime = "11:00 AM";
+        sj.endTime = "11:30 AM";
+      } else if (t == 9) {
+        sj.startTime = "11:30 AM";
+        sj.endTime = "12:00 PM";
+      } else if (t == 10) {
+        sj.startTime = "12:00 PM";
+        sj.endTime = "12:30 PM";
+      } else if (t == 11) {
+        sj.startTime = "12:30 PM";
+        sj.endTime = "01:00 PM";
+      } else if (t == 12) {
+        sj.startTime = "01:00 PM";
+        sj.endTime = "01:30 PM";
+      } else if (t == 13) {
+        sj.startTime = "01:30 PM";
+        sj.endTime = "02:00 PM";
+      } else if (t == 14) {
+        sj.startTime = "02:00 PM";
+        sj.endTime = "02:30 PM";
+      } else if (t == 15) {
+        sj.startTime = "02:30 PM";
+        sj.endTime = "03:00 PM";
+      } else if (t == 16) {
+        sj.startTime = "03:00 PM";
+        sj.endTime = "03:30 PM";
+      } else if (t == 17) {
+        sj.startTime = "03:30 PM";
+        sj.endTime = "04:00 PM";
+      } else if (t == 18) {
+        sj.startTime = "04:00 PM";
+        sj.endTime = "04:30 PM";
+      } else if (t == 19) {
+        sj.startTime = "04:30 PM";
+        sj.endTime = "05:00 PM";
+      } else if (t == 20) {
+        sj.startTime = "05:00 PM";
+        sj.endTime = "05:30 PM";
+      } else if (t == 21) {
+        sj.startTime = "05:30 PM";
+        sj.endTime = "06:00 PM";
+      } else if (t == 22) {
+        sj.startTime = "06:00 PM";
+        sj.endTime = "06:30 PM";
+      } else if (t == 23) {
+        sj.startTime = "06:30 PM";
+        sj.endTime = "07:00 PM";
+      } else if (t == 24) {
+        sj.startTime = "07:00 PM";
+        sj.endTime = "07:30 PM";
+      } else if (t == 25) {
+        sj.startTime = "07:30 PM";
+        sj.endTime = "08:00 PM";
+      }
+      data.push(sj);
+    });
+    try {
+      console.log(data);
+      await addReservation(data);
+      message.success("Successfully book amenity");
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
   render() {
     const layout = {
       labelCol: {
