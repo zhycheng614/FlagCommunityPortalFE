@@ -1,10 +1,89 @@
 import React from "react";
-import { message, Tabs, List, Typography, Button } from "antd";
+import { Col, Row, message, Tabs, List, Typography, Button, Card } from "antd";
 import AmenitiesPage from "./AmenitiesPage";
 import { getReservationsByUser, cancelReservation } from "../../util";
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
+
+export class MyReservationsBlock extends React.Component {
+  state = {
+    loading: false,
+    data: [],
+  };
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = async () => {
+    this.setState({
+      loading: true,
+    });
+    try {
+      const resp = await getReservationsByUser();
+      this.setState({
+        data: resp,
+      });
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
+  };
+
+  render() {
+    // const { loading, reservations } = this.state;
+    return (
+      <Card
+        style={{
+          margin: "10px",
+        }}
+        title={
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Text ellipsis={true} style={{ maxWidth: 200 }}>
+              Upcoming Reservations
+            </Text>
+          </div>
+        }
+      >
+        <List
+          style={{ margin: "auto", height: 100, overflow: "auto" }}
+          loading={this.state.loading}
+          dataSource={this.state.data}
+          renderItem={(item) => (
+            //超出显示滚动条
+            <List.Item
+            // actions={[
+            //   <CancelReservationButton
+            //     onCancelSuccess={this.loadData}
+            //     reservationId={item.reservation_id}
+            //   />,
+            // ]}
+            >
+              <List.Item.Meta
+                description={
+                  <>
+                    <Text>
+                      <Row>
+                        <Col span={6}> {item.reservationName}</Col>
+                        <Col span={5}>{item.date}</Col>
+                        <Col span={6}>Start: {item.startTime}</Col>
+                        <Col span={6}>End: {item.endTime}</Col>
+                      </Row>
+                    </Text>
+                  </>
+                }
+              />
+            </List.Item>
+          )}
+        />
+      </Card>
+    );
+  }
+}
 
 class CancelReservationButton extends React.Component {
   state = {
@@ -78,15 +157,10 @@ class MyReservations extends React.Component {
 
     return (
       <List
-        style={{ width: 1000, margin: "auto" }}
-        // loading={this.state.loading}
-        // dataSource={this.state.data}
-        // dataSource={data}
-
+        style={{ width: 1200, margin: "auto" }}
         loading={this.state.loading}
         dataSource={this.state.data}
         renderItem={(item) => (
-          //测试data
           <List.Item
             actions={[
               <CancelReservationButton
@@ -100,13 +174,20 @@ class MyReservations extends React.Component {
               description={
                 <>
                   <Text>
-                    Event: {item.reservationName}, Reservation ID:
-                    {item.reservation_id}
-                  </Text>
-                  <br />
-                  <Text>
-                    Date: {item.date}, Start Time: {item.startTime}, End Time:
-                    {item.endTime}
+                    <Row>
+                      <Col span={5}> Location: {item.reservationName}</Col>
+
+                      <Col span={5}>
+                        Reservation ID:
+                        {item.reservation_id}
+                      </Col>
+                      <Col span={4}>Date: {item.date}</Col>
+                      <Col span={4}>Start: {item.startTime}</Col>
+                      <Col span={4}>
+                        End:
+                        {item.endTime}
+                      </Col>
+                    </Row>
                   </Text>
                 </>
               }
@@ -125,7 +206,7 @@ class TenantReservationPage extends React.Component {
         <TabPane tab="Amenities" key="1">
           <AmenitiesPage />
         </TabPane>
-        <TabPane tab="My Reservations" key="2">
+        <TabPane tab="MyReservations" key="2">
           <MyReservations />
         </TabPane>
       </Tabs>
@@ -134,22 +215,3 @@ class TenantReservationPage extends React.Component {
 }
 
 export default TenantReservationPage;
-
-const data = [
-  {
-    amenity_name: "Party Room",
-    reservation_id: 141325234,
-    event_titile: "birthday party",
-    date: 5 / 3,
-    start_time: 1,
-    end_time: 2,
-  },
-  {
-    amenity_name: "Yoga Room",
-    reservation_id: 23411,
-    event_titile: "yoga class",
-    date: 5 / 25,
-    start_time: 1,
-    end_time: 2,
-  },
-];
