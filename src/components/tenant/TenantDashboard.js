@@ -3,7 +3,12 @@ import { PushpinOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { MyReservationsBlock } from "./TenantReservationPage";
 import { useEffect, useState } from "react";
-import { getAllAnnouncements, getMaintenanceByUser } from "../../util";
+import {
+  getAllAnnouncements,
+  getMaintenanceByUser,
+  getPaymentByUser,
+  updatePayment,
+} from "../../util";
 import { ContentDetailButton } from "../manager/ManagerAnnouncementPage";
 import { MessageButton } from "./TenantMaintenance";
 
@@ -200,6 +205,57 @@ export const AnnouncementBlock = () => {
   );
 };
 
+export const PaymentBlock = () => {
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await getPaymentByUser();
+      setInvoices(response);
+    } catch (error) {
+      console.log("Error fetching payment data:", error);
+    }
+    setLoading(false);
+  };
+
+  const columns = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "Title", dataIndex: "title", key: "title" },
+    { title: "Location", dataIndex: "location", key: "location" },
+    { title: "Description", dataIndex: "description", key: "description" },
+    { title: "Amount", dataIndex: "amount", key: "amount" },
+    { title: "Time", dataIndex: "time", key: "time" },
+  ];
+
+  const unpaidDataSource = invoices.filter((item) => item.status === "Unpaid");
+
+  return (
+    <Card
+      style={{ margin: "10px" }}
+      title={
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Text ellipsis={true} style={{ maxWidth: 150 }}>
+            Unpaid Invoices
+          </Text>
+        </div>
+      }
+    >
+      <Table
+        columns={columns}
+        dataSource={unpaidDataSource}
+        rowKey="id"
+        loading={loading}
+      />
+    </Card>
+  );
+};
+
 const TenantDashboard = () => {
   return (
     <>
@@ -212,7 +268,9 @@ const TenantDashboard = () => {
       <div style={{ width: "50%", height: "33.3%", float: "left" }}>
         <MyReservationsBlock />
       </div>
-      <div style={{ width: "50%", height: "33.3%", float: "left" }}>4</div>
+      <div style={{ width: "50%", height: "33.3%", float: "left" }}>
+        <PaymentBlock />
+      </div>
     </>
   );
 };
