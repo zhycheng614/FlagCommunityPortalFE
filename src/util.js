@@ -518,8 +518,8 @@ export const updatePayment = (data) => {
  */
 export const getAllPost = () => {
   const authToken = localStorage.getItem("authToken");
-  const listPostUrl = `${domain}/posts`;
-  return fetch(listPostUrl, {
+  const getAllPostUrl = `${domain}/posts`;
+  return fetch(getAllPostUrl, {
     headers: {
       Authorization: `Bearer ${authToken}`,
     },

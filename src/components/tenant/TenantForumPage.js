@@ -8,6 +8,7 @@ import {
   Tabs,
   Tooltip,
   message,
+  Select,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
@@ -43,10 +44,19 @@ const CreateNewPost = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
+    console.log(values);
     setLoading(true);
 
     try {
-      await addPost({ values });
+      if (values.dropdown == "sec") {
+        await "secondhand(values)";
+      } else if (values.dropdown == "los") {
+        await "localStorage(values)";
+      } else if (values.dropdown == "com") {
+        await "communi(values)";
+      } else if (values.dropdown == "others") {
+        await "other(values)";
+      }
       message.success("Submitted successfully.");
     } catch (error) {
       message.error(error.message);
@@ -66,8 +76,18 @@ const CreateNewPost = () => {
         <Input disabled={loading} placeholder="Title of post" />
       </Form.Item>
 
-      <Form.Item name="category" label="category" rules={[{ required: true }]}>
-        <Input disabled={loading} placeholder="Category of post" />
+      <Form.Item
+        name="category"
+        label="category"
+        rules={[{ required: true }]}
+        labelCol={{ span: 8, offset: 0 }}
+      >
+        <Select>
+          <Select.Option value="sec">Second hand trading</Select.Option>
+          <Select.Option value="los">Lost and find</Select.Option>
+          <Select.Option value="com">Community</Select.Option>
+          <Select.Option value="others">Others</Select.Option>
+        </Select>
       </Form.Item>
 
       <Form.Item name="content" label="Content" rules={[{ required: true }]}>
