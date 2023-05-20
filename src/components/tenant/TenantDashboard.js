@@ -1,4 +1,4 @@
-import { Button, Card, Space, Table, message } from "antd";
+import { Card, Space, Table, message } from "antd";
 import { PushpinOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { MyReservationsBlock } from "./TenantReservationPage";
