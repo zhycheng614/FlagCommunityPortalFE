@@ -142,6 +142,7 @@ const Move = () => {
           <Select.Option value="out">Move out</Select.Option>
         </Select>
       </Form.Item>
+
       <Form.Item
         name="tenant"
         label="Tenant"

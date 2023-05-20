@@ -8,11 +8,12 @@ import {
   Tabs,
   Tooltip,
   message,
+  Select,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
-import { getPostByUser, deletePost, addPost } from "../../util";
+import { getPostByUser, deletePost, addPost, getAllPost } from "../../util";
 
 const { TabPane } = Tabs;
 
@@ -25,10 +26,13 @@ const layout = {
 const TenantForumPage = () => {
   return (
     <Tabs defaultActiveKey="1" destroyInactiveTabPane={true}>
-      <TabPane tab="Create New" key="1">
+      <TabPane tab="All Posts" key="1">
+        <GetAllPosts />
+      </TabPane>
+      <TabPane tab="Create New" key="2">
         <CreateNewPost />
       </TabPane>
-      <TabPane tab="Manage All" key="2">
+      <TabPane tab="Manage All" key="3">
         <GetAllPostByUser />
       </TabPane>
     </Tabs>
@@ -40,10 +44,19 @@ const CreateNewPost = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
+    console.log(values);
     setLoading(true);
 
     try {
-      await addPost({ values });
+      if (values.dropdown == "sec") {
+        await "secondhand(values)";
+      } else if (values.dropdown == "los") {
+        await "localStorage(values)";
+      } else if (values.dropdown == "com") {
+        await "communi(values)";
+      } else if (values.dropdown == "others") {
+        await "other(values)";
+      }
       message.success("Submitted successfully.");
     } catch (error) {
       message.error(error.message);
@@ -63,8 +76,18 @@ const CreateNewPost = () => {
         <Input disabled={loading} placeholder="Title of post" />
       </Form.Item>
 
-      <Form.Item name="category" label="category" rules={[{ required: true }]}>
-        <Input disabled={loading} placeholder="Category of post" />
+      <Form.Item
+        name="category"
+        label="category"
+        rules={[{ required: true }]}
+        labelCol={{ span: 8, offset: 0 }}
+      >
+        <Select>
+          <Select.Option value="sec">Second hand trading</Select.Option>
+          <Select.Option value="los">Lost and find</Select.Option>
+          <Select.Option value="com">Community</Select.Option>
+          <Select.Option value="others">Others</Select.Option>
+        </Select>
       </Form.Item>
 
       <Form.Item name="content" label="Content" rules={[{ required: true }]}>
@@ -164,6 +187,79 @@ const GetAllPostByUser = () => {
     try {
       const resp = await getPostByUser();
       setData(resp.reverse());
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const onDeleteSuccess = () => {
+    message.success("Record deleted successfully");
+    loadData();
+  };
+
+  const columns = [
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+
+    {
+      title: "Content",
+      dataIndex: "content",
+      key: "content",
+      render: (text, record, index) => (
+        <Space>
+          <Text>Details</Text>
+          <PostDetailButton post={data[index]} />
+        </Space>
+      ),
+    },
+
+    {
+      title: "Release Time",
+      key: "time",
+      dataIndex: "time",
+      align: "center",
+      width: "150px",
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      align: "center",
+      width: "150px",
+      render: (text, record, index) => (
+        <DeleteButton post={data[index]} onDeleteSuccess={onDeleteSuccess} />
+      ),
+    },
+  ];
+
+  return <Table loading={loading} columns={columns} dataSource={data} />;
+};
+
+//6.show all posts
+const GetAllPosts = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const loadData = async () => {
+    setLoading(true);
+
+    try {
+      const allposts = await getAllPost();
+      setData(allposts.reverse());
     } catch (error) {
       message.error(error.message);
     } finally {
