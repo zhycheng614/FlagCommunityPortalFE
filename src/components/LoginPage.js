@@ -18,14 +18,11 @@ const authorityOptions = [
   },
 ];
 
-const LoginPage = (props) => {
+const LoginPage = ({ handleLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [authority, setAuthority] = useState("");
 
   const formRef = React.createRef();
-
-  // get function from parent
-  const { handleLoginSuccess } = props;
 
   // function to handle login button
   const handleLogin = async () => {

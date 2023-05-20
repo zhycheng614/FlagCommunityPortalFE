@@ -2,8 +2,96 @@ import { Button, Card, Space, Table, message } from "antd";
 import { PushpinOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import { useEffect, useState } from "react";
-import { getAllAnnouncements } from "../../util";
+import { getAllAnnouncements, getMaintenanceByUser } from "../../util";
 import { ContentDetailButton } from "../manager/ManagerAnnouncementPage";
+import { MessageButton } from "./TenantMaintenance";
+
+export const MaintenanceBlock = ({ rows }) => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+
+  const loadData = async () => {
+    setLoading(true);
+
+    try {
+      const resp = await getMaintenanceByUser();
+      const inProgressRecord = resp.filter(
+        (resp) => resp.status === "In Progress"
+      );
+      setData(inProgressRecord.reverse().slice(0, rows));
+    } catch (error) {
+      message.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+    },
+    {
+      title: "Date",
+      key: "process_date",
+      dataIndex: "process_date",
+      align: "center",
+      width: "20%",
+    },
+    {
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+      align: "center",
+      width: "20%",
+      render: (text, record, index) => (
+        <Text style={{ color: "#0000FF", fontWeight: 700 }}>
+          {data[index].status}
+        </Text>
+      ),
+    },
+    {
+      title: "Message",
+      key: "message",
+      dataIndex: "message",
+      align: "center",
+      width: "1%",
+      render: (text, record, index) => (
+        <MessageButton maintenanceSheet={data[index]} />
+      ),
+    },
+  ];
+
+  return (
+    <Card
+      style={{
+        height: "100%",
+        margin: "10px",
+      }}
+      title={
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Text ellipsis={true} style={{ maxWidth: 150 }}>
+            Maintenance
+          </Text>
+        </div>
+      }
+    >
+      <Table
+        showHeader={false}
+        size="small"
+        pagination={false}
+        loading={loading}
+        columns={columns}
+        dataSource={data}
+      />
+    </Card>
+  );
+};
 
 export const AnnouncementBlock = () => {
   const [loading, setLoading] = useState(false);
@@ -88,6 +176,7 @@ export const AnnouncementBlock = () => {
   return (
     <Card
       style={{
+        height: "100%",
         margin: "10px",
       }}
       title={
@@ -99,7 +188,9 @@ export const AnnouncementBlock = () => {
       }
     >
       <Table
-        pagination={{ pageSize: 7 }}
+        // style={{ height: "400px" }}
+        // scroll={{ y: "500px" }}
+        pagination={{ pageSize: 5 }}
         loading={loading}
         columns={columns}
         dataSource={data[0]}
@@ -114,7 +205,9 @@ const TenantDashboard = () => {
       <div style={{ width: "50%", height: "100%", float: "left" }}>
         <AnnouncementBlock />
       </div>
-      <div style={{ width: "50%", height: "33.3%", float: "left" }}>2</div>
+      <div style={{ width: "50%", height: "33.3%", float: "left" }}>
+        <MaintenanceBlock rows={2} />
+      </div>
       <div style={{ width: "50%", height: "33.3%", float: "left" }}>3</div>
       <div style={{ width: "50%", height: "33.3%", float: "left" }}>4</div>
     </>
