@@ -154,45 +154,18 @@ class AmenitiesList extends React.Component {
                   </div>
                 }
                 cover={
-                  <Image
-                    src={item.Image}
-                    alt={item.name}
-                    style={{
-                      display: "block",
-                    }}
-                    dataSource={data}
-                    renderItem={(item) => (
-                        <List.Item>
-                            <Card
-                                hoverable
-                                style={{
-                                    width: 240,
-                                    height: 220,
-                                }}
-                                // key={item.id}
-                                // title={<AddReservationButton />}
-                                title={
-                                    <div style={{display: "flex", alignItems: "center"}}>
-                                        <AmenityDetailInfoButton amenity={item}/>
-                                        <Text ellipsis={true} style={{maxWidth: 150}}>
-                                            {item.name}
-                                        </Text>
-                                    </div>
-                                }
-                                // extra={<SelectAmenityButton amenity={item} />}
-                                cover={
-                                    <Image
-                                        src={item.Image}
-                                        alt={item.name}
-                                        style={{
-                                            display: "block",
-                                        }}
-                                    />
-                                }
-                            ></Card>
-                        </List.Item>
+                            <Image
+                              src={item.Image}
+                              alt={item.name}
+                              style={{
+                                display: "block",
+                              }}
+                            />
+                          }
+                        ></Card>
+                      </List.Item>
                     )}
-                />
+                  />
             </Space>
         );
     }
