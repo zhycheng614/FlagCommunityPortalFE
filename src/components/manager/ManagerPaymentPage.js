@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getPayment, addPayment } from "../../util";
-import {
-  Table,
-  Button,
-  Modal,
-  Input,
-  DatePicker,
-  Tabs,
-  Select,
-  Form,
-} from "antd";
+import { Table, Button, Modal, Input, DatePicker, Tabs } from "antd";
 
 const { TabPane } = Tabs;
-const { Option } = Select;
 
 const ManagerPaymentPage = () => {
   const [invoices, setInvoices] = useState([]);
@@ -74,31 +64,15 @@ const ManagerPaymentPage = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newInvoice, setNewInvoice] = useState({
-    apartmentType: "",
-    billType: "",
+    invoiceName: "",
     amount: "",
     dueDate: "",
   });
-  const calculateAmount = (apartmentType, billType) => {
-    const rates = {
-      "1-Bedroom": { "Management Fee": 600, Rent: 3500 },
-      "2-Bedroom": { "Management Fee": 700, Rent: 4000 },
-      Studio: { "Management Fee": 500, Rent: 3000 },
-    };
-    if (
-      billType !== "Other" &&
-      rates[apartmentType] &&
-      rates[apartmentType][billType]
-    ) {
-      return rates[apartmentType][billType];
-    }
-
-    return "";
-  };
 
   const showModal = () => {
     setIsModalVisible(true);
   };
+
   const handleOk = async () => {
     try {
       await addPayment(newInvoice);
@@ -113,24 +87,14 @@ const ManagerPaymentPage = () => {
     setIsModalVisible(false);
   };
 
-  const handleInputChange = (name, value) => {
-    let updatedInvoice = { ...newInvoice, [name]: value };
-    if (name === "billType" && value === "Other") {
-      updatedInvoice = { ...updatedInvoice, amount: "" };
-    } else if (name === "billType" || name === "apartmentType") {
-      updatedInvoice = {
-        ...updatedInvoice,
-        amount: calculateAmount(
-          updatedInvoice.apartmentType,
-          updatedInvoice.billType
-        ),
-      };
-    }
-    setNewInvoice(updatedInvoice);
+  const handleInputChange = (e) => {
+    setNewInvoice({ ...newInvoice, [e.target.name]: e.target.value });
   };
+
   const handleDateChange = (_, dateString) => {
     setNewInvoice({ ...newInvoice, dueDate: dateString });
   };
+
   return (
     <div>
       <Button onClick={showModal}>Add Bills</Button>
@@ -140,52 +104,28 @@ const ManagerPaymentPage = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Form.Item label="Room Type">
-          <Select
-            name="apartmentType"
-            placeholder="Apartment Type"
-            style={{ width: 200 }}
-            onChange={(value) => handleInputChange("apartmentType", value)}
-            value={newInvoice.apartmentType}
-          >
-            <Option value="1-Bedroom">1-Bedroom</Option>
-            <Option value="2-Bedroom">2-Bedroom</Option>
-            <Option value="Studio">Studio</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Bill Type">
-          <Select
-            name="billType"
-            placeholder="Bill Type"
-            style={{ width: 200 }}
-            onChange={(value) => handleInputChange("billType", value)}
-            value={newInvoice.billType}
-          >
-            <Option value="Management Fee">Management Fee</Option>
-            <Option value="Rent">Rent</Option>
-            <Option value="Other">Other</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Amount">
-          <Input
-            name="amount"
-            placeholder="Amount"
-            type="number"
-            disabled={newInvoice.billType !== "Other"}
-            onChange={(e) => handleInputChange(e.target.name, e.target.value)}
-            value={newInvoice.amount}
-          />
-        </Form.Item>
-
-        <Form.Item label="Due Date">
-          <DatePicker
-            name="dueDate"
-            onChange={handleDateChange}
-            format="YYYY-MM-DD"
-          />
-        </Form.Item>
+        <Input
+          name="invoiceName"
+          placeholder="Invoice Name"
+          onChange={handleInputChange}
+          value={newInvoice.invoiceName}
+        />
+        <br />
+        <br />
+        <Input
+          name="amount"
+          placeholder="Amount"
+          type="number"
+          onChange={handleInputChange}
+          value={newInvoice.amount}
+        />
+        <br />
+        <br />
+        <DatePicker
+          name="dueDate"
+          onChange={handleDateChange}
+          format="YYYY-MM-DD"
+        />
       </Modal>
       <Tabs defaultActiveKey="1">
         <TabPane tab="All" key="1">
