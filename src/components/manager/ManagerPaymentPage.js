@@ -74,23 +74,23 @@ const ManagerPaymentPage = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newInvoice, setNewInvoice] = useState({
-    apartmentType: "",
-    billType: "",
+    invoiceName: "",
     amount: "",
     dueDate: "",
   });
-  const calculateAmount = (apartmentType, billType) => {
+
+  const calculateAmount = (apartmentType, invoiceName) => {
     const rates = {
       "1-Bedroom": { "Management Fee": 600, Rent: 3500 },
       "2-Bedroom": { "Management Fee": 700, Rent: 4000 },
       Studio: { "Management Fee": 500, Rent: 3000 },
     };
     if (
-      billType !== "Other" &&
+      invoiceName !== "Other" &&
       rates[apartmentType] &&
-      rates[apartmentType][billType]
+      rates[apartmentType][invoiceName]
     ) {
-      return rates[apartmentType][billType];
+      return rates[apartmentType][invoiceName];
     }
 
     return "";
@@ -99,9 +99,20 @@ const ManagerPaymentPage = () => {
   const showModal = () => {
     setIsModalVisible(true);
   };
+
   const handleOk = async () => {
+    console.log(newInvoice);
+    const finalInvoice = {
+      invoiceName: newInvoice.invoiceName,
+      amount: newInvoice.amount,
+      dueDate: `${newInvoice.dueDate}T23:59:59`,
+    };
     try {
-      await addPayment(newInvoice);
+      await addPayment(
+        finalInvoice,
+        newInvoice.apartmentType,
+        newInvoice.invoiceName
+      );
       fetchData();
       setIsModalVisible(false);
     } catch (error) {
@@ -115,14 +126,14 @@ const ManagerPaymentPage = () => {
 
   const handleInputChange = (name, value) => {
     let updatedInvoice = { ...newInvoice, [name]: value };
-    if (name === "billType" && value === "Other") {
+    if (name === "invoiceName" && value === "Other") {
       updatedInvoice = { ...updatedInvoice, amount: "" };
-    } else if (name === "billType" || name === "apartmentType") {
+    } else if (name === "invoiceName" || name === "apartmentType") {
       updatedInvoice = {
         ...updatedInvoice,
         amount: calculateAmount(
           updatedInvoice.apartmentType,
-          updatedInvoice.billType
+          updatedInvoice.invoiceName
         ),
       };
     }
@@ -156,11 +167,11 @@ const ManagerPaymentPage = () => {
 
         <Form.Item label="Bill Type">
           <Select
-            name="billType"
+            name="invoiceName"
             placeholder="Bill Type"
             style={{ width: 200 }}
-            onChange={(value) => handleInputChange("billType", value)}
-            value={newInvoice.billType}
+            onChange={(value) => handleInputChange("invoiceName", value)}
+            value={newInvoice.invoiceName}
           >
             <Option value="Management Fee">Management Fee</Option>
             <Option value="Rent">Rent</Option>
@@ -173,7 +184,7 @@ const ManagerPaymentPage = () => {
             name="amount"
             placeholder="Amount"
             type="number"
-            disabled={newInvoice.billType !== "Other"}
+            disabled={newInvoice.invoiceName !== "Other"}
             onChange={(e) => handleInputChange(e.target.name, e.target.value)}
             value={newInvoice.amount}
           />
