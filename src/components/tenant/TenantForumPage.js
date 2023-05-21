@@ -265,26 +265,49 @@ const GetAllPosts = () => {
     loadData();
   }, []);
 
-  const onDeleteSuccess = () => {
-    message.success("Record deleted successfully");
-    loadData();
-  };
-
   const columns = [
     {
       title: "Category",
       dataIndex: "category",
       key: "category",
+      align: "center",
+      width: "200px",
+      filters: [
+        {
+          text: "Second Hand Trading",
+          value: "Second Hand Trading",
+        },
+        {
+          text: "Lost & find",
+          value: "Lost & find",
+        },
+        {
+          text: "Community",
+          value: "Community",
+        },
+        {
+          text: "Others",
+          value: "Others",
+        },
+      ],
+      // specify the condition of filtering result
+      // here is that finding the name started with `value`
+      onFilter: (value, record) => record.category.indexOf(value) === 0,
+      sorter: (a, b) => a.category.length - b.category.length,
+      sortDirections: ["descend"],
     },
+
     {
       title: "Title",
       dataIndex: "title",
+      align: "center",
       key: "title",
     },
 
     {
       title: "Content",
       dataIndex: "content",
+      align: "center",
       key: "content",
       render: (text, record, index) => (
         <Space>
@@ -300,16 +323,16 @@ const GetAllPosts = () => {
       dataIndex: "time",
       align: "center",
       width: "150px",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => new Date(a.time) - new Date(b.time),
     },
 
     {
-      title: "Action",
-      key: "action",
+      title: "Username",
+      key: "userId",
+      dataIndex: "userId",
       align: "center",
       width: "150px",
-      render: (text, record, index) => (
-        <DeleteButton post={data[index]} onDeleteSuccess={onDeleteSuccess} />
-      ),
     },
   ];
 
