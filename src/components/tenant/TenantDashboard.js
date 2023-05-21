@@ -11,6 +11,7 @@ import {
 } from "../../util";
 import { ContentDetailButton } from "../manager/ManagerAnnouncementPage";
 import { MessageButton } from "./TenantMaintenance";
+import moment from "moment";
 
 export const MaintenanceBlock = ({ rows }) => {
   const [loading, setLoading] = useState(false);
@@ -225,15 +226,58 @@ export const PaymentBlock = () => {
   };
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Location", dataIndex: "location", key: "location" },
-    { title: "Description", dataIndex: "description", key: "description" },
-    { title: "Amount", dataIndex: "amount", key: "amount" },
-    { title: "Time", dataIndex: "time", key: "time" },
+    {
+      title: "Invoice ID",
+      dataIndex: "invoiceID",
+      key: "invoiceID",
+    },
+    {
+      title: "Tenant",
+      dataIndex: "tenant",
+      key: "tenant",
+    },
+    {
+      title: "Invoice Name",
+      dataIndex: "invoiceName",
+      key: "invoiceName",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+    },
+    {
+      title: "Invoice Date",
+      dataIndex: "invoiceDate",
+      key: "invoiceDate",
+      render: (invoiceDate) =>
+        moment(invoiceDate, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm"),
+    },
+    {
+      title: "Due Date",
+      dataIndex: "dueDate",
+      key: "dueDate",
+      render: (dueDate) =>
+        moment(dueDate, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm"),
+    },
+    {
+      title: "Payment Date",
+      dataIndex: "paymentDate",
+      key: "paymentDate",
+      render: (paymentDate) =>
+        paymentDate
+          ? moment(paymentDate, "YYYY-MM-DD HH:mm:ss").format(
+              "YYYY-MM-DD HH:mm"
+            )
+          : "",
+    },
   ];
 
-  const unpaidDataSource = invoices.filter((item) => item.status === "Unpaid");
+  const unpaidDataSource = invoices.filter(
+    (item) =>
+      !moment(item.paymentDate).isValid() &&
+      moment(item.dueDate).isAfter(moment())
+  );
 
   return (
     <Card

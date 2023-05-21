@@ -17,7 +17,9 @@ const TenantPaymentPage = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await getPaymentByUser();
+      const username = localStorage.getItem("username");
+      const response = await getPaymentByUser(username);
+      console.log(response);
       setInvoices(response);
     } catch (error) {
       console.log("Error fetching payment data:", error);
@@ -27,12 +29,51 @@ const TenantPaymentPage = () => {
 
   const getColumns = (isUnpaidTable) => {
     const columns = [
-      { title: "ID", dataIndex: "id", key: "id" },
-      { title: "Title", dataIndex: "title", key: "title" },
-      { title: "Location", dataIndex: "location", key: "location" },
-      { title: "Description", dataIndex: "description", key: "description" },
-      { title: "Amount", dataIndex: "amount", key: "amount" },
-      { title: "Time", dataIndex: "time", key: "time" },
+      {
+        title: "Invoice ID",
+        dataIndex: "invoiceID",
+        key: "invoiceID",
+      },
+      {
+        title: "Tenant",
+        dataIndex: "tenant",
+        key: "tenant",
+      },
+      {
+        title: "Invoice Name",
+        dataIndex: "invoiceName",
+        key: "invoiceName",
+      },
+      {
+        title: "Amount",
+        dataIndex: "amount",
+        key: "amount",
+      },
+      {
+        title: "Invoice Date",
+        dataIndex: "invoiceDate",
+        key: "invoiceDate",
+        render: (invoiceDate) =>
+          moment(invoiceDate, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm"),
+      },
+      {
+        title: "Due Date",
+        dataIndex: "dueDate",
+        key: "dueDate",
+        render: (dueDate) =>
+          moment(dueDate, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm"),
+      },
+      {
+        title: "Payment Date",
+        dataIndex: "paymentDate",
+        key: "paymentDate",
+        render: (paymentDate) =>
+          paymentDate
+            ? moment(paymentDate, "YYYY-MM-DD HH:mm:ss").format(
+                "YYYY-MM-DD HH:mm"
+              )
+            : "",
+      },
     ];
 
     if (isUnpaidTable) {
@@ -54,15 +95,35 @@ const TenantPaymentPage = () => {
 
   const handleCheckboxChange = (e, record) => {
     if (e.target.checked) {
-      setSelectedInvoices([...selectedInvoices, record.id]);
+      setSelectedInvoices([...selectedInvoices, record.invoiceID]);
     } else {
-      setSelectedInvoices(selectedInvoices.filter((id) => id !== record.id));
+      setSelectedInvoices(
+        selectedInvoices.filter((id) => id !== record.invoiceID)
+      );
     }
   };
 
   const handlePayment = async () => {
     try {
-      await updatePayment(selectedInvoices);
+      for (let invoiceID of selectedInvoices) {
+        const invoice = invoices.find(
+          (invoice) => invoice.invoiceID === invoiceID
+        );
+        if (!invoice) {
+          throw new Error(`Invoice with ID ${invoiceID} not found`);
+        }
+
+        const newInvoice = {
+          invoiceID: invoice.invoiceID,
+          invoiceName: invoice.invoiceName,
+          amount: invoice.amount,
+          invoiceDate: invoice.invoiceDate,
+          dueDate: invoice.dueDate,
+          paymentDate: null,
+        };
+
+        await updatePayment(newInvoice);
+      }
       setSelectedInvoices([]);
       fetchData();
     } catch (error) {
@@ -70,12 +131,18 @@ const TenantPaymentPage = () => {
     }
   };
 
-  const paidDataSource = invoices.filter((item) => item.status === "Paid");
-  const unpaidDataSource = invoices.filter((item) => item.status === "Unpaid");
+  const paidDataSource = invoices.filter((item) =>
+    moment(item.paymentDate).isValid()
+  );
+  const unpaidDataSource = invoices.filter(
+    (item) =>
+      !moment(item.paymentDate).isValid() &&
+      moment(item.dueDate).isAfter(moment())
+  );
   const overdueDataSource = invoices.filter(
     (item) =>
-      item.status === "Unpaid" &&
-      moment(item.time, "YYYY.MM.DD h:mmA").isBefore(moment())
+      !moment(item.paymentDate).isValid() &&
+      moment(item.dueDate).isBefore(moment())
   );
 
   return (
@@ -97,7 +164,7 @@ const TenantPaymentPage = () => {
         />
         <div style={{ textAlign: "right", marginTop: "15px" }}>
           <Button type="primary" onClick={handlePayment}>
-            Payment
+            Pay
           </Button>
         </div>
       </TabPane>
