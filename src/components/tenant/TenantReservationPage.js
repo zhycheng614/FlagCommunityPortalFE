@@ -52,7 +52,7 @@ export class MyReservationsBlock extends React.Component {
         }
       >
         <List
-          style={{ margin: "auto", height: 100, overflow: "auto" }}
+          style={{ margin: "auto", height: 150, overflow: "auto" }}
           loading={this.state.loading}
           dataSource={this.state.data}
           renderItem={(item) => {

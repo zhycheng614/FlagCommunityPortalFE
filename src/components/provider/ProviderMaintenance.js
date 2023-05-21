@@ -78,7 +78,7 @@ const CompletedPane = () => {
 
     try {
       const resp = await getMaintenanceCompleted();
-      setData(resp);
+      setData(resp.reverse());
     } catch (error) {
       message.error(error.message);
     } finally {
@@ -98,7 +98,7 @@ const CompletedPane = () => {
             key={item.id}
             title={
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Text ellipsis={true} style={{ maxWidth: 300 }}>
+                <Text ellipsis={true} style={{ maxWidth: 500 }}>
                   {`${item.title}\u00A0\u00A0\u00A0@${item.location}`}
                 </Text>
               </div>
@@ -180,7 +180,7 @@ const RespondedPane = () => {
             key={item.id}
             title={
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Text ellipsis={true} style={{ maxWidth: 300 }}>
+                <Text ellipsis={true} style={{ maxWidth: 500 }}>
                   {`${item.title}\u00A0\u00A0\u00A0@${item.location}`}
                 </Text>
               </div>
@@ -297,7 +297,7 @@ const SubmittedPane = () => {
             key={item.id}
             title={
               <div style={{ display: "flex", alignItems: "center" }}>
-                <Text ellipsis={true} style={{ maxWidth: 300 }}>
+                <Text ellipsis={true} style={{ maxWidth: 500 }}>
                   {`${item.title}\u00A0\u00A0\u00A0@${item.location}`}
                 </Text>
               </div>
