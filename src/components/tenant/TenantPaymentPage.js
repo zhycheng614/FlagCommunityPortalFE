@@ -17,9 +17,9 @@ const TenantPaymentPage = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const username = localStorage.getItem("username"); //获取保存的username
-      const response = await getPaymentByUser(username); //传递username
-      console.log(response); // 打印后端返回的数据
+      const username = localStorage.getItem("username");
+      const response = await getPaymentByUser(username);
+      console.log(response);
       setInvoices(response);
     } catch (error) {
       console.log("Error fetching payment data:", error);
@@ -113,9 +113,16 @@ const TenantPaymentPage = () => {
           throw new Error(`Invoice with ID ${invoiceID} not found`);
         }
 
-        invoice.paymentDate = new Date().toISOString();
+        const newInvoice = {
+          invoiceID: invoice.invoiceID,
+          invoiceName: invoice.invoiceName,
+          amount: invoice.amount,
+          invoiceDate: invoice.invoiceDate,
+          dueDate: invoice.dueDate,
+          paymentDate: null,
+        };
 
-        await updatePayment(invoice);
+        await updatePayment(newInvoice);
       }
       setSelectedInvoices([]);
       fetchData();

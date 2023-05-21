@@ -585,8 +585,8 @@ export const addPayment = (data, apartType, invoiceType) => {
  */
 export const updatePayment = (data) => {
   const authToken = localStorage.getItem("authToken");
-  const updatPaymenteUrl = `${domain}/payment/update`;
-  return fetch(updatPaymenteUrl, {
+  const updatePaymentUrl = `${domain}/payment/update`;
+  return fetch(updatePaymentUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${authToken}`,
