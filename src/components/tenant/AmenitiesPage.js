@@ -388,29 +388,6 @@ class SelectAmenityButton extends React.Component {
     }
   };
 
-  //   try {
-  //     const startTime = new Date(values["Time Slot"][0]);
-  //     const endTime = new Date(values["Time Slot"][1]);
-
-  //     // Perform the comparison or any other logic with startTime and endTime here
-
-  //     await addReservation({
-  //       date: values.date.format("YYYY-MM-DD"),
-  //       start_time: startTime.toISOString(), // Convert start_time to Date object
-  //       end_time: endTime.toISOString(), // Convert end_time to Date object
-  //       amenity: {
-  //         id: amenity.id,
-  //       },
-  //     });
-  //     message.success("Successfully booked amenity");
-  //   } catch (error) {
-  //     message.error(error.message);
-  //   } finally {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //   }
-  // };
   handleSubmit = async (values) => {
     const { amenity } = this.props;
     this.setState({

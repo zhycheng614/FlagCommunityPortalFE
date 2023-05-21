@@ -35,7 +35,8 @@ export class MyReservationsBlock extends React.Component {
   };
 
   render() {
-    // const { loading, reservations } = this.state;
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+
     return (
       <Card
         style={{
@@ -54,32 +55,30 @@ export class MyReservationsBlock extends React.Component {
           style={{ margin: "auto", height: 100, overflow: "auto" }}
           loading={this.state.loading}
           dataSource={this.state.data}
-          renderItem={(item) => (
-            //超出显示滚动条
-            <List.Item
-            // actions={[
-            //   <CancelReservationButton
-            //     onCancelSuccess={this.loadData}
-            //     reservationId={item.reservation_id}
-            //   />,
-            // ]}
-            >
-              <List.Item.Meta
-                description={
-                  <>
-                    <Text>
-                      <Row>
-                        <Col span={6}> {item.reservationName}</Col>
-                        <Col span={5}>{item.date}</Col>
-                        <Col span={6}>Start: {item.startTime}</Col>
-                        <Col span={6}>End: {item.endTime}</Col>
-                      </Row>
-                    </Text>
-                  </>
-                }
-              />
-            </List.Item>
-          )}
+          renderItem={(item) => {
+            // Check if the reservation date is today or after today
+            if (item.date >= today) {
+              return (
+                <List.Item>
+                  <List.Item.Meta
+                    description={
+                      <>
+                        <Text>
+                          <Row>
+                            <Col span={6}>{item.reservationName}</Col>
+                            <Col span={5}>{item.date}</Col>
+                            <Col span={6}>Start: {item.startTime}</Col>
+                            <Col span={6}>End: {item.endTime}</Col>
+                          </Row>
+                        </Text>
+                      </>
+                    }
+                  />
+                </List.Item>
+              );
+            }
+            return null; // Skip rendering for reservations before today
+          }}
         />
       </Card>
     );
@@ -154,47 +153,45 @@ class MyReservations extends React.Component {
   };
 
   render() {
-    // const { loading, reservations } = this.state;
+    const today = new Date().toISOString().split("T")[0];
 
     return (
       <List
         style={{ width: 1200, margin: "auto" }}
         loading={this.state.loading}
         dataSource={this.state.data}
-        renderItem={(item) => (
-          <List.Item
-            actions={[
-              <CancelReservationButton
-                onCancelSuccess={this.loadData}
-                reservationId={item.reservation_id}
-              />,
-            ]}
-          >
-            <List.Item.Meta
-              title={<Text>{item.amenity_name}</Text>}
-              description={
-                <>
-                  <Text>
-                    <Row>
-                      <Col span={5}> Location: {item.reservationName}</Col>
-
-                      <Col span={5}>
-                        Reservation ID:
-                        {item.reservation_id}
-                      </Col>
-                      <Col span={4}>Date: {item.date}</Col>
-                      <Col span={4}>Start: {item.startTime}</Col>
-                      <Col span={4}>
-                        End:
-                        {item.endTime}
-                      </Col>
-                    </Row>
-                  </Text>
-                </>
-              }
-            />
-          </List.Item>
-        )}
+        renderItem={(item) => {
+          if (item.date >= today) {
+            return (
+              <List.Item
+                actions={[
+                  <CancelReservationButton
+                    onCancelSuccess={this.loadData}
+                    reservationId={item.reservation_id}
+                  />,
+                ]}
+              >
+                <List.Item.Meta
+                  title={<Text>{item.amenity_name}</Text>}
+                  description={
+                    <Text>
+                      <Row>
+                        <Col span={5}>Location: {item.reservationName}</Col>
+                        <Col span={5}>
+                          Reservation ID: {item.reservation_id}
+                        </Col>
+                        <Col span={4}>Date: {item.date}</Col>
+                        <Col span={4}>Start: {item.startTime}</Col>
+                        <Col span={4}>End: {item.endTime}</Col>
+                      </Row>
+                    </Text>
+                  }
+                />
+              </List.Item>
+            );
+          }
+          return null;
+        }}
       />
     );
   }
@@ -216,22 +213,3 @@ class TenantReservationPage extends React.Component {
 }
 
 export default TenantReservationPage;
-
-const data = [
-  {
-    amenity_name: "Party Room",
-    reservation_id: 141325234,
-    event_titile: "birthday party",
-    date: 5 / 3,
-    start_time: 1,
-    end_time: 2,
-  },
-  {
-    amenity_name: "Yoga Room",
-    reservation_id: 23411,
-    event_titile: "yoga class",
-    date: 5 / 25,
-    start_time: 1,
-    end_time: 2,
-  },
-];

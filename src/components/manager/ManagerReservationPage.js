@@ -11,7 +11,6 @@ import {
   Result,
 } from "antd";
 import AmenitiesPage from "../tenant/AmenitiesPage";
-import moment from "moment";
 import { getReservations, cancelReservation } from "../../util";
 
 const { Text } = Typography;
@@ -46,6 +45,8 @@ export class AllReservationsBlock extends React.Component {
   };
 
   render() {
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+
     return (
       <Card
         style={{
@@ -70,28 +71,25 @@ export class AllReservationsBlock extends React.Component {
                 title={<Text>{item.amenityName}</Text>}
                 description={
                   <>
-                    {/* 循环children并输出 <Text>
-                    Event: {item.reservation_name}, Reservation ID:
-                    {item.reservation_id}
-                  </Text>
-                  <br />
-                  <Text>
-                    Date: {item.date}, Start Time: {item.start_time}, End Time:
-                    {item.end_time}
-                  </Text>*/}
-                    {item.childrenList.map((child) => (
-                      <>
-                        <Text>
-                          <Row>
-                            <Col span={6}>Name: {child.userId}</Col>
-                            <Col span={5}>{child.date}</Col>
-                            <Col span={6}>Start: {child.startTime}</Col>
-                            <Col span={6}>End: {child.endTime}</Col>
-                          </Row>
-                        </Text>
-                        <br />
-                      </>
-                    ))}
+                    {item.childrenList.map((child) => {
+                      // Check if the child's date is today or after today
+                      if (child.date >= today) {
+                        return (
+                          <>
+                            <Text>
+                              <Row>
+                                <Col span={6}>Name: {child.userId}</Col>
+                                <Col span={5}>{child.date}</Col>
+                                <Col span={6}>Start: {child.startTime}</Col>
+                                <Col span={6}>End: {child.endTime}</Col>
+                              </Row>
+                            </Text>
+                            <br />
+                          </>
+                        );
+                      }
+                      return null; // Skip rendering for reservations before today
+                    })}
                   </>
                 }
               />
@@ -153,15 +151,6 @@ class AllReservations extends React.Component {
     this.loadData();
   }
 
-  //   dataFormat(date) {
-  //     const { today } = this.state;
-  //     const todayTime = moment().format("YYYY-MM-DD");
-  //     const dateFormat = date.replace(/-/g, "/");
-  //     const newDateFormat = Date.parse(dateFormat);
-  //     const newDate = newDateFormat <= today ? todayTime : date;
-  //     return newDate;
-  //   }
-
   loadData = async () => {
     console.log(Result);
     this.setState({
@@ -170,12 +159,6 @@ class AllReservations extends React.Component {
 
     try {
       const resp = await getReservations();
-      //   if (nowDate > this.date) {
-      //     const resp2 = await getReservations(this.state.date);
-      //     this.setState({
-      //       allReservations: resp2,
-      //     });
-      //   }
       this.setState({
         data: resp,
       });
@@ -189,53 +172,46 @@ class AllReservations extends React.Component {
   };
 
   render() {
+    const today = new Date().toISOString().split("T")[0];
+
     return (
       <List
         style={{ width: 1200, margin: "auto" }}
         loading={this.state.loading}
         dataSource={this.state.data}
         renderItem={(item) => (
-          //测试data
           <List.Item>
             <List.Item.Meta
               title={<Text>{item.amenityName}</Text>}
               description={
                 <>
-                  {/* 循环children并输出 <Text>
-                    Event: {item.reservation_name}, Reservation ID:
-                    {item.reservation_id}
-                  </Text>
-                  <br />
-                  <Text>
-                    Date: {item.date}, Start Time: {item.start_time}, End Time:
-                    {item.end_time}
-                  </Text>*/}
-                  {item.childrenList.map((child) => (
-                    <>
-                      <Text>
-                        <Row>
-                          <Col span={4}>
-                            Reservation ID:
-                            {child.reservation_id}
-                          </Col>
-                          <Col span={4}>User ID: {child.userId}</Col>
-                          <Col span={3}>Date: {child.date}</Col>
-                          <Col span={3}>Start: {child.startTime}</Col>
-                          <Col span={3}>
-                            End:
-                            {child.endTime}
-                          </Col>
-                          <Col span={2}>
-                            <CancelReservationButton
-                              onCancelSuccess={this.loadData}
-                              reservationId={child.reservation_id}
-                            />
-                          </Col>
-                        </Row>
-                      </Text>
-                      <br />
-                    </>
-                  ))}
+                  {item.childrenList.map((child) => {
+                    if (child.date >= today) {
+                      return (
+                        <div key={child.reservation_id}>
+                          <Text>
+                            <Row>
+                              <Col span={4}>
+                                Reservation ID: {child.reservation_id}
+                              </Col>
+                              <Col span={4}>User ID: {child.userId}</Col>
+                              <Col span={3}>Date: {child.date}</Col>
+                              <Col span={3}>Start: {child.startTime}</Col>
+                              <Col span={3}>End: {child.endTime}</Col>
+                              <Col span={2}>
+                                <CancelReservationButton
+                                  onCancelSuccess={this.loadData}
+                                  reservationId={child.reservation_id}
+                                />
+                              </Col>
+                            </Row>
+                          </Text>
+                          <br />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
                 </>
               }
             />
@@ -262,22 +238,3 @@ class ManagerReservationPage extends React.Component {
 }
 
 export default ManagerReservationPage;
-
-const data = [
-  {
-    amenity_name: "Party Room",
-    reservation_id: 141325234,
-    event_titile: "birthday party",
-    date: 5 / 3,
-    start_time: 1,
-    end_time: 2,
-  },
-  {
-    amenity_name: "Yoga Room",
-    reservation_id: 23411,
-    event_titile: "yoga class",
-    date: 5 / 25,
-    start_time: 1,
-    end_time: 2,
-  },
-];
